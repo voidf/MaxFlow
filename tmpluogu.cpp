@@ -1,29 +1,25 @@
-﻿// Large-MediumExcessScalingAlgorithm
-// from arxiv:1910.04848 section 4
 
-// #define DBG
 
-#ifndef DBG
-
-#define PY_SSIZE_T_CLEAN
-#include <Python.h>
-
-#endif
-
+// #include <bits/stdc++.h>
 #include <memory>
 #include <cmath>
+#include <cstdint>
+#include <utility>
+#include <limits>
+#include <queue>
 #include <vector>
+#include <list>
 #include <iostream>
 #include <unordered_set>
 #include <unordered_map>
 #include <numeric>
-#include <algorithm>
 using namespace std;
 
 #define vec vector
 #define us unordered_set
 #define mp unordered_map
 
+int n, m, s, t;
 template <typename T>
 class que
 {
@@ -43,7 +39,6 @@ public:
     bool empty() const noexcept { return _front == _back; }
     void reset() noexcept { _front = _back = 0; }
 };
-
 template <typename node>
 struct li
 {
@@ -92,6 +87,7 @@ template <typename T, typename U>
 struct cached_edge
 {
     cached_edge(T to, U c, T rev) : to(to), rev(rev), cap(c), rcap(c) {}
+    cached_edge(T to, U c, T rev, U rc) : to(to), rev(rev), cap(c), rcap(rc) {}
     T to, rev;
     U cap, rcap;
 };
@@ -219,9 +215,9 @@ namespace ahuja_orlin
         {
             _source = s;
             _sink = t;
-            for (auto &u : rnet)
-                for (auto &edge : u)
-                    edge.cap = edge.rcap = (edge.cap + edge.rcap) / 2;
+            // for (auto &u : rnet)
+            //     for (auto &edge : u)
+            //         edge.cap = edge.rcap = (edge.cap + edge.rcap) / 2;
             init();
         }
 
@@ -579,315 +575,89 @@ namespace ahuja_orlin
     };
 }
 
-template <class U>
-struct Solver
+vec<vec<cached_edge<int, long long>>> G;
+vec<int> I, J;
+
+void with_clean_data(int n, int m)
 {
-    vec<vec<cached_edge<int, U>>> G;
-
-    void add_edge(int u, int v, U w)
-    {
-        G[u].emplace_back(v, w, G[v].size());
-        G[v].emplace_back(u, w, G[u].size() - 1);
-    }
-
-    unique_ptr<int[]> node, tmp1, d;
-    vec<vec<U>> ans;
-    vec<vec<int>> ansedge;
-    vec<vec<vec<int>>> cutsets;
-    int _n;
-    Solver(int n) : node(make_unique<int[]>(n)), tmp1(make_unique<int[]>(n)), d(make_unique<int[]>(n)),
-                    //    ans(n, vec<int>(n, ~0u >> 1)),
-                    _n(n),
-                    G(n)
-    {
-        init();
-    }
-    void init()
-    {
-        iota(node.get(), node.get() + _n, 0);
-        ans.assign(_n, vec<U>(_n, ~0u >> 1));
-        ansedge.assign(_n, vec<int>(_n, ~0u >> 1));
-    }
-
-    void work(int l, int r, ahuja_orlin::max_flow_instance<int, U> &ao)
-    {
-        if (l == r)
-            return;
-        int S = node[l], T = node[l + 1];
-        U t = 0;
-
-        fill(d.get(), d.get() + _n, 0);
-        int c = 0;
-        ao.prepare(S, T);
-        t = ao.find_max_flow();
-        ao.preflow_to_flow();
-        for (auto i : ao.stcut())
-            d[c++] = i;
-        ans[T][S] = ans[S][T] = t;
-        int pos = ansedge[T][S] = ansedge[S][T] = cutsets.size();
-        // cerr << "DEBUG: [before] cutsets size:" << cutsets.size() << endl;
-        cutsets.emplace_back(ao.cutset(d.get()));
-        // cerr << "flow: " << t << ", pos:" << pos << ", size:" << cutsets.back().size() << endl;
-        // cerr << "DEBUG: [after] cutsets size:" << cutsets.size() << endl;
-
-        int cnt1 = 0, cnt2 = r - l;
-        for (int i = l; i <= r; ++i)
-            if (d[node[i]])
-                tmp1[cnt1++] = node[i];
-            else
-                tmp1[cnt2--] = node[i];
-        copy(tmp1.get(), tmp1.get() + r - l + 1, node.get() + l);
-        cnt2 = r - l - cnt2;
-        work(l, l + cnt1 - 1, ao);
-        work(l + cnt1, r, ao);
-        for (int i = 0; i < cnt1; ++i)
-            for (int j = 0; j < cnt2; ++j)
-            {
-                int ii = node[i + l], jj = node[j + cnt1 + l];
-                U minans = ans[ii][S];
-                int mincset = ansedge[ii][S];
-                if (minans > ans[S][T])
-                {
-                    minans = ans[S][T];
-                    mincset = pos;
-                }
-                if (minans > ans[T][jj])
-                {
-                    minans = ans[T][jj];
-                    mincset = ansedge[T][jj];
-                }
-                ans[jj][ii] = ans[ii][jj] = minans;
-                ansedge[jj][ii] = ansedge[ii][jj] = mincset;
-                // cerr << "[" << jj << ", " << ii << "] minans:" << minans << ", mincset:" << mincset << ", size:" << cutsets[mincset].size() << endl;
-            }
-    }
-
-    void solve()
-    {
-        ahuja_orlin::max_flow_instance<int, U> ao(G);
-        work(0, _n - 1, ao);
-    }
-};
-
-#ifdef DBG
-
-signed main()
-{
-    using U = long long;
-    ios::sync_with_stdio(0);
-    int n, m;
-    cin >> n >> m;
-    ++n;
-    auto sol = Solver<U>(n);
+    using T = long long;
+    mp<int, T> P;
+    I.assign(n + 1, -1);
+    us<int> S;
     while (m--)
     {
         int u, v;
-        U w;
+        T w;
         cin >> u >> v >> w;
-        sol.add_edge(u, v, w);
+        if (u == v)
+            continue;
+        // if (u > v)
+        // swap(u, v);
+        S.emplace(u);
+        S.emplace(v);
+        auto k = u * (n + 2) + v;
+        auto iter = P.find(k);
+        if (iter != P.end())
+            iter->second += w;
+        else
+            P[k] = w;
     }
-    sol.solve();
-    cin >> n;
-    while (n--)
+    int ctr = 0;
+    J.reserve(S.size());
+    for (auto k : S)
     {
-        int x, y;
-        cin >> x >> y;
-        cout << sol.ans[x][y] << '\n';
+        I[k] = ctr++;
+        J.emplace_back(k);
     }
-    // auto sol = Solver<double>(3);
-    // sol.add_edge(0, 1, .5);
-    // sol.add_edge(0, 2, .5);
-    // sol.add_edge(1, 2, .5);
-    // sol.solve();
-    // cerr << sol.ans[0][1] << endl;
+    int nn = S.size();
+    int mm = P.size();
+    G.assign(nn, {});
+    for (auto [k, w] : P)
+    {
+        int u = k / (n + 2);
+        int v = k % (n + 2);
+        if (u < v)
+        {
+            int iu = I[u];
+            int iv = I[v];
+            auto it = P.find(v * (n + 2) + u);
+            T rc;
+            if (it != P.end())
+                rc = it->second;
+            else
+                rc = 0;
+            G[iu].emplace_back(iv, w, G[iv].size(), rc);
+            G[iv].emplace_back(iu, rc, G[iu].size() - 1, w);
+        }
+        else
+        {
+            int iu = I[u];
+            int iv = I[v];
+            auto it = P.find(v * (n + 2) + u);
+            T rc;
+            if (it != P.end())
+                continue;
+            else
+                rc = 0;
+            G[iu].emplace_back(iv, w, G[iv].size(), rc);
+            G[iv].emplace_back(iu, rc, G[iu].size() - 1, w);
+        }
+    }
+}
 
-    // auto sol2 = Solver<double>(3);
-    // sol2.add_edge(0, 1, 1);
-    // sol2.add_edge(0, 2, 1);
-    // sol2.add_edge(1, 2, 1);
-    // sol2.solve();
-    // cerr << sol2.ans[0][1] << endl;
+int main()
+{
+    ios::sync_with_stdio(0);
+    cin >> n >> m >> s >> t;
+    if (s == t)
+    {
+        cout << 0 << '\n';
+        return 0;
+    }
+    int x, y;
+    with_clean_data(n, m);
+    auto ao = ahuja_orlin::max_flow_instance<int, long long>(G);
+    ao.prepare(I[s], I[t]);
+    cout << ao.find_max_flow() << '\n';
     return 0;
 }
-
-#else
-
-template <class T>
-PyObject *vec2int_tuple(vec<T> &src)
-{
-    int n = src.size();
-    PyObject *uarr = PyTuple_New(n);
-    if (!uarr)
-        throw logic_error("Unable to allocate memory for 1d array");
-
-    for (int i = 0; i < n; ++i)
-    {
-        PyObject *num = extractor<T>::pack(src[i]);
-        if (!num)
-        {
-            Py_DECREF(uarr);
-            throw logic_error("Unable to allocate memory for Python int");
-        }
-        PyTuple_SET_ITEM(uarr, i, num);
-    }
-    return uarr;
-}
-template <class T>
-PyObject *vec2d2int_tuple(vec<vec<T>> &src)
-{
-    int n = src.size();
-    PyObject *ans = PyTuple_New(n);
-    if (!ans)
-        throw logic_error("Unable to allocate memory for 2d array");
-    for (int i = 0; i < n; ++i)
-    {
-        PyObject *uarr = NULL;
-        try
-        {
-            uarr = vec2int_tuple(src[i]);
-        }
-        catch (logic_error &e)
-        {
-            Py_DECREF(ans);
-            throw e;
-        }
-        PyTuple_SET_ITEM(ans, i, uarr);
-    }
-    return ans;
-}
-
-template <class T>
-PyObject *vec3d2int_tuple(vec<vec<vec<T>>> &src)
-{
-    int n = src.size();
-    PyObject *ans = PyTuple_New(n);
-    if (!ans)
-        throw logic_error("Unable to allocate memory for 3d array");
-    for (int i = 0; i < n; ++i)
-    {
-        PyObject *uarr = NULL;
-        try
-        {
-            uarr = vec2d2int_tuple(src[i]);
-        }
-        catch (logic_error &e)
-        {
-            Py_DECREF(ans);
-            throw e;
-        }
-        PyTuple_SET_ITEM(ans, i, uarr);
-    }
-    return ans;
-}
-
-template <class T, int Dim = 1>
-struct extractor
-{
-    static T extract(PyObject *obj);
-    static PyObject *pack(T val);
-};
-
-template <>
-static int extractor<int>::extract(PyObject *obj) { return PyLong_AsLong(obj); }
-template <>
-static double extractor<double>::extract(PyObject *obj) { return PyFloat_AsDouble(obj); }
-template <>
-static PyObject *extractor<int>::pack(int val) { return PyLong_FromLong(val); }
-template <>
-static PyObject *extractor<double>::pack(double val) { return PyFloat_FromDouble(val); }
-
-template <class U>
-static PyObject *ao_main(PyObject *self, PyObject *args)
-{
-    // PyObject *result = NULL; // exception
-    PyObject *li;
-    if (!PyArg_ParseTuple(args, "O!", &PyList_Type, &li))
-    {
-        PyErr_SetString(PyExc_TypeError, "edge list must be a list of list[u, v, w].");
-        return NULL;
-    }
-    auto m = PyList_Size(li);
-    int maxn = 0;
-    vec<tuple<int, int, U>> Ebuffer;
-    for (Py_ssize_t i = 0; i < m; ++i)
-    {
-        PyObject *elem = PyList_GetItem(li, i);
-        if (!PyList_Check(elem) || PyList_Size(elem) != 3)
-        {
-            PyErr_SetString(PyExc_TypeError, "edge list element must be a list following the form [u, v, w].");
-            return NULL;
-        }
-        int u, v;
-        U w;
-        u = PyLong_AsLong(PyList_GetItem(elem, 0));
-        v = PyLong_AsLong(PyList_GetItem(elem, 1));
-        w = extractor<U>::extract(PyList_GetItem(elem, 2));
-        // cerr << "DEBUG: edge(" << u << ", " << v << ", " << w << ")" << endl;
-        maxn = max({u, v, maxn});
-        Ebuffer.emplace_back(u, v, w);
-    }
-    auto n = maxn + 1;
-    // cerr << "DEBUG: n:" << n << endl;
-    auto sol = Solver<U>(n);
-    // cerr << "DEBUG: Solver:" << &sol << endl;
-    for (auto &[u, v, w] : Ebuffer)
-        sol.add_edge(u, v, w);
-    // cerr << "DEBUG: before solve" << endl;
-    sol.solve();
-    // cerr << "DEBUG: after solve" << endl;
-
-    PyObject *ans = vec2d2int_tuple(sol.ans);
-    PyObject *ans_cutset_index = vec2d2int_tuple(sol.ansedge);
-    PyObject *cutsets = vec3d2int_tuple(sol.cutsets);
-
-    PyObject *ret = PyTuple_New(3);
-    if (!ret)
-        throw logic_error("Unable to allocate memory for return tuple(ans, ans_cutset_index, cutsets)");
-    PyTuple_SET_ITEM(ret, 0, ans);
-    PyTuple_SET_ITEM(ret, 1, ans_cutset_index);
-    PyTuple_SET_ITEM(ret, 2, cutsets);
-    return ret;
-}
-
-static char ao_docs[] =
-    "ahuja_orlin O(n * m) solve maxflow with residual network \n"
-    "output n * n tuple of pair wise mincut answers";
-
-static PyMethodDef cmds[] = {
-    {"solve_int", (PyCFunction)ao_main<int>,
-     METH_VARARGS /*（METH_VARARGS,MET_KEYWORDSMET_KEYWORDS关键字参数,MET_NOARGS无参数*/,
-     ao_docs},
-    {"solve_double", (PyCFunction)ao_main<double>, // 如果流值不全是整数，不保证正确性
-     METH_VARARGS,
-     ao_docs},
-    {NULL, NULL, 0, NULL}};
-
-static struct PyModuleDef ao_definition = {
-    PyModuleDef_HEAD_INIT,
-    "ao",
-    "ahuja_orlin copied from https://github.com/touqir14/MaxFlow",
-    -1,
-    cmds};
-
-PyMODINIT_FUNC PyInit_ao(void) // 必须是PyInit_{setup.py中提供的模块名}
-{
-    Py_Initialize();
-    return PyModule_Create(&ao_definition);
-}
-// C:\\etc\\VisualStudio\\2019\\Community\\VC\\Tools\\MSVC\\14.29.30133\\bin\\HostX86\\x64\\cl.exe
-
-#endif
-
-/*
-4 5
-1 2 2
-2 3 2
-4 2 3
-4 3 1
-1 3 1
-3
-1 4
-2 4
-2 3
-
-*/
