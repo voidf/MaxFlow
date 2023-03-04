@@ -1,0 +1,8 @@
+.vscode/
+*.elf
+*.obj
+*.exe
+build/
+ao.egg-info/
+*.in
+*.out
