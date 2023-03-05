@@ -517,7 +517,7 @@ struct Solver
 
 signed main()
 {
-    using U = long long;
+    using U = int;
     ios::sync_with_stdio(0);
     int n, m;
     cin >> n >> m;

@@ -133,6 +133,15 @@ for k in range(K, 0, -1):
             推流_重标号操作(i)
 ```
 
+For a given active node i, PUSH/RELABEL procedure contains the following steps:
+
+first, find an arc (i,j) from residual network directed out of node i that meets the condition `d[i]=d[j]+1` and `R[i][j] > 0`.
+
+If such an arc found, then push flow `f=min(excess[i], R[i][j], delta - excess[i])` from i to j. Update the excess values of nodes i and j accordingly. If the updated excess of node i is no longer bigger than `delta/2`, then delete it from active node list `LIST[d[i]]`. Obviously j should be an inactive node since we always select a node with the lowest distance label d[i] for PUSH/RELABEL operation, otherwise we would push the excess from j until it become inactive or increase its label before we process node i. So when j is not source or sink, and the updated excess of j is bigger than `delta/2`, we should change j from inactive to active, so add it to active node list `LIST[d[j]]`, in this case, remember to decrease level by 1 due to d[i]=d[j]+1 holds. This step we call it PUSH.
+
+If not such arc found, then pick a node from the arc set directed out of node i with the destination j having the lowest distant label d[j], delete i from active node list `LIST[d[i]]`, then update d[i] to d[j] + 1 and add node i to active node list `LIST[d[j]+1]`. This step we call it RELABEL.
+
+
 推流_重标号操作(i)
 ```python
 found = False

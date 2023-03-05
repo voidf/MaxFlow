@@ -1,4 +1,7 @@
-﻿#define DBG
+﻿// Large-MediumExcessScalingAlgorithm
+// from arxiv:1910.04848 section 4
+
+// #define DBG
 
 #ifndef DBG
 
@@ -107,7 +110,7 @@ namespace ahuja_orlin
 
         struct label_info
         {
-            li<vertex> act, iact;
+            li<vertex> largeset, mediumset, smallset;
         };
 
     private:
@@ -115,23 +118,48 @@ namespace ahuja_orlin
         vector<vector<cached_edge<T, U>>> &rnet;
         unique_ptr<label_info[]> lab;
         unique_ptr<vertex[]> verts;
-        unique_ptr<T[]> arc;
+        unique_ptr<T[]> NextL;
         que<pa> distq;
-        T _source, _sink, lact{0}, hact{0}, hivert{0}, _relabel_progress{0}, _relabel_threshold;
-        U _max_cap;
+        T _source, _sink, hivert{0}, _relabel_progress{0}, _relabel_threshold;
+        T lactl{0}, hactl{0}, lactm{0}, hactm{0};
+        T MinL{0}, MaxML{0};
+        U _max_cap, K, karg, delta;
 
     public:
         max_flow_instance(vector<vector<cached_edge<T, U>>> &graph)
             : rnet(graph),
               lab(make_unique<label_info[]>(rnet.size() + 1)),
               verts(make_unique<vertex[]>(rnet.size())),
-              arc(make_unique<T[]>(rnet.size())),
+              NextL(make_unique<T[]>(rnet.size())),
               distq(que<pa>{rnet.size()})
         {
             T m = 0;
             for (size_t i = 0; i < rnet.size(); ++i)
                 m += rnet[i].size();
             _relabel_threshold = rnet.size() * ALPHA + m / 2;
+
+            // for (auto &node_edges : rnet)
+            // {
+            //     sort(node_edges.begin(), node_edges.end(), [&](const cached_edge<T, U> &a, const cached_edge<T, U> &b) -> bool
+            //          { return a.cap + a.rcap > b.cap + b.rcap; });
+            //     for (auto &e : node_edges)
+            //     {
+            //         auto &re = rnet[e.to][(long long)(e.rev)];
+            //         long long dist = &e - &node_edges.front();
+            //         re.rev = (cached_edge<T, U> *)dist;
+            //     }
+            // }
+            _max_cap = 0;
+            for (auto &node_edges : rnet)
+                for (auto &e : node_edges)
+                {
+                    _max_cap = max(_max_cap, e.cap);
+                    // auto &re = rnet[e.to][(long long)(e.rev)];
+                    // e.rev = &re;
+                }
+            K = static_cast<U>(ceil(log2(ceil(_max_cap)))); // 流值相关，过大可能有溢出风险。logU的来源，不(能很好)支持浮点
+            auto kpow = static_cast<U>(log2(2 + ceil(log2(_max_cap) / log2(log2(_max_cap)))));
+            karg = static_cast<U>(ceil(pow(2, kpow)));
         }
         max_flow_instance() {}
         U find_max_flow()
@@ -173,20 +201,12 @@ namespace ahuja_orlin
 
         auto cutset(T *d) const
         {
-            // cerr << "[s,t]:" << _source << ", " << _sink << endl;
-            // cerr << "d:";
-            // for (int u = 0; u < rnet.size(); ++u)
-            // cerr << d[u] << " ";
-            // cerr << endl;
+
             vec<vec<T>> cset;
             for (int u = 0; u < rnet.size(); ++u)
                 for (auto &edge : rnet[u])
-                {
-                    // cerr << "(" << u << ", " << edge.to << "), cap:" << edge.cap << ", rcap:" << edge.rcap << endl;
-                    // if (edge.cap == 0)
                     if (u > edge.to && (d[u] == 0) != (0 == d[edge.to]))
                         cset.push_back({u, edge.to});
-                }
             return cset;
         }
 
@@ -208,14 +228,16 @@ namespace ahuja_orlin
         {
             for (int u = 0; u < rnet.size() + 1; ++u)
             {
-                lab[u].act.clear();
-                lab[u].iact.clear();
+                lab[u].largeset.clear();
+                lab[u].mediumset.clear();
+                lab[u].smallset.clear();
             }
+            // _max_cap = 0;
 
-            _max_cap = 0;
             for (auto &edge : rnet[_source]) // 先把流从源点提出来
             {
-                _max_cap = max(_max_cap, edge.cap);
+                // _max_cap = max(_max_cap, edge.cap + 1);
+
                 verts[edge.to].excess = edge.cap;
                 edge.rcap += edge.cap;
                 rnet[edge.to][edge.rev].cap += edge.cap;
@@ -227,49 +249,84 @@ namespace ahuja_orlin
 
         void find_max_flow_inner()
         {
-            auto K = static_cast<U>(ceil(log2(ceil(_max_cap)))); // 流值相关，过大可能有溢出风险。logU的来源，不(能很好)支持浮点
-            global_relabel(_max_cap);
-            for (U k = 0; k <= K; ++k)
+
+            global_relabel();
+            for (delta = static_cast<U>(pow(2, K)); delta >= 1; delta /= karg)
             {
-                auto delta = static_cast<U>(pow(2, K - k)); // 流值相关
+                // auto delta = static_cast<U>(pow(2, K - k)); // 流值相关
 
-                lact = rnet.size();
-                hact = 1;
-
+                lactm = lactl = rnet.size();
+                hactm = hactl = 1;
+                // if (_source == 1 && _sink == 2)
+                // cerr << "breakpoint";
                 for (size_t i = 0; i <= hivert; ++i)
                 {
-                    lab[i].act.clear();
-                    lab[i].iact.clear();
+                    lab[i].largeset.clear();
+                    lab[i].mediumset.clear();
+                    lab[i].smallset.clear();
                 }
 
                 for (size_t i = 0; i < rnet.size(); ++i)
                 {
-                    if (verts[i].excess > delta / 2 && i != _source &&
-                        i != _sink && verts[i].label < rnet.size())
+                    if (i != _source && i != _sink && verts[i].label < rnet.size() && verts[i].excess > 0)
                     {
-                        lact = min(lact, verts[i].label);
-                        hact = max(hact, verts[i].label);
-                        lab[verts[i].label].act.push(&verts[i]);
+                        if (verts[i].excess >= delta / 2)
+                        {
+                            lactl = min(lactl, verts[i].label);
+                            hactl = max(hactl, verts[i].label);
+                            lab[verts[i].label].largeset.push(&verts[i]);
+                            continue;
+                        }
+                        else if (verts[i].excess >= delta / karg)
+                        {
+                            lactm = min(lactm, verts[i].label);
+                            hactm = max(hactm, verts[i].label);
+                            lab[verts[i].label].mediumset.push(&verts[i]);
+                            continue;
+                        }
                     }
-                    else
-                        lab[verts[i].label].iact.push(&verts[i]);
+                    // else
+                    lab[verts[i].label].smallset.push(&verts[i]);
                 }
-
-                while (lact <= hact)
+                while (lactl <= hactl || lactm <= hactm)
                 {
-                    if (lab[lact].act.empty())
+                    while (lactl <= hactl)
                     {
-                        ++lact;
-                        continue;
+                        if (lab[lactl].largeset.empty())
+                        {
+                            ++lactl;
+                            continue;
+                        }
+
+                        auto vertex = get_vertex_idx(lab[lactl].largeset.front());
+                        // if (vertex == 5)
+                        // cerr << "breakpoint2";
+                        process(vertex, false);
+
+                        if (_relabel_progress * GLOBAL_RELABEL_FREQ >= _relabel_threshold)
+                        {
+                            _relabel_progress = 0;
+                            global_relabel();
+                        }
                     }
-
-                    auto vertex = get_vertex_idx(lab[lact].act.front());
-                    process(vertex, delta);
-
-                    if (_relabel_progress * GLOBAL_RELABEL_FREQ >= _relabel_threshold)
+                    if (lactm <= hactm)
                     {
-                        _relabel_progress = 0;
-                        global_relabel(delta);
+                        if (lab[hactm].mediumset.empty())
+                        {
+                            --hactm;
+                            continue;
+                        }
+
+                        auto vertex = get_vertex_idx(lab[hactm].mediumset.front());
+                        // if (vertex == 8)
+                        // cerr << "bp3";
+                        process(vertex, true);
+
+                        if (_relabel_progress * GLOBAL_RELABEL_FREQ >= _relabel_threshold)
+                        {
+                            _relabel_progress = 0;
+                            global_relabel();
+                        }
                     }
                 }
             }
@@ -277,25 +334,35 @@ namespace ahuja_orlin
 
         T get_vertex_idx(vertex *n) { return distance(verts.get(), n); }
 
-        inline void process(const T vertex, const U delta)
+        inline void process(const T vertex, const bool med)
         {
             const auto label = verts[vertex].label;
-            if (push(vertex, label, delta))
+            if (push(vertex, label, med))
                 return;
-            relabel(vertex, label); // 没推到至少delta/2
+            relabel(vertex, label, med); // 没推到至少delta/2
+        }
+
+        inline char point_type(const T vertex) const
+        {
+            if (verts[vertex].excess == 0)
+                return 0;
+            else if (verts[vertex].excess >= delta / 2)
+                return 2;
+            else if (verts[vertex].excess >= delta / karg)
+                return 1;
+            return 0;
         }
 
         /* 非饱和推流，不是推完vertex的excess，而是推到还剩delta/2以下 */
-        inline bool push(const T vertex, const T label, const U delta)
+        inline bool push(const T vertex, const T label, const bool med)
         {
-            for (T i(arc[vertex]); i < rnet[vertex].size(); ++i)
-            {
-                auto &edge = rnet[vertex][i];
+            for (auto &edge : rnet[vertex])
                 if (edge.cap > 0 && label == verts[edge.to].label + 1)
                 {
                     auto flow = min(verts[vertex].excess, edge.cap);
                     if (edge.to != _sink)
                         flow = min(flow, delta - verts[edge.to].excess); // 推向的点最多持有delta的超额流
+                    char target_point_type_old = point_type(edge.to);
 
                     verts[vertex].excess -= flow;
                     verts[edge.to].excess += flow;
@@ -305,60 +372,111 @@ namespace ahuja_orlin
                     rnet[edge.to][edge.rev].cap += flow;
 
                     bool ret = false;
-                    if (verts[vertex].excess <= delta / 2)
+                    if (med)
                     {
-                        lab[label].act.remove(&verts[vertex]);
-                        lab[label].iact.push(&verts[vertex]);
-                        ret = true;
+                        if (verts[vertex].excess < delta / karg || verts[vertex].excess == 0)
+                        {
+                            lab[label].mediumset.remove(&verts[vertex]);
+                            lab[label].smallset.push(&verts[vertex]);
+                            ret = true;
+                        }
+                    }
+                    else
+                    {
+                        if (verts[vertex].excess == 0)
+                        {
+                            lab[label].largeset.remove(&verts[vertex]);
+                            lab[label].smallset.push(&verts[vertex]);
+                            ret = true;
+                        }
+                        else if (verts[vertex].excess < delta / 2)
+                        {
+                            lab[label].largeset.remove(&verts[vertex]);
+                            if (verts[vertex].excess >= delta / karg)
+                                lab[label].mediumset.push(&verts[vertex]);
+                            else
+                                lab[label].smallset.push(&verts[vertex]);
+
+                            ret = true;
+                        }
                     }
 
-                    if (verts[edge.to].excess > delta / 2 && edge.to != _source &&
-                        edge.to != _sink)
+                    if (edge.to != _source && edge.to != _sink)
                     {
-                        lab[label - 1].iact.remove(&verts[edge.to]);
-                        lab[label - 1].act.push(&verts[edge.to]);
-                        --lact;
-                        ret = true;
+                        char target_point_type_new = point_type(edge.to);
+                        if (target_point_type_new != target_point_type_old)
+                        {
+                            if (target_point_type_old == 0)
+                                lab[label - 1].smallset.remove(&verts[edge.to]);
+                            else if (target_point_type_old == 1)
+                                lab[label - 1].mediumset.remove(&verts[edge.to]);
+
+                            if (target_point_type_new == 1)
+                            {
+                                lab[label - 1].mediumset.push(&verts[edge.to]);
+                                lactm = min(lactm, label - 1);
+                            }
+                            else if (target_point_type_new == 2)
+                            {
+                                lab[label - 1].largeset.push(&verts[edge.to]);
+                                lactl = min(lactl, label - 1);
+                            }
+                            ret = true;
+                        }
+                        // if (verts[edge.to].excess >= delta / 2)
+                        // {
+                        //     lab[label - 1].smallset.remove(&verts[edge.to]);
+                        //     lab[label - 1].largeset.push(&verts[edge.to]);
+                        //     lactl = min(lactl, label - 1);
+                        //     // --lactl;
+                        // }
+                        // else if (verts[edge.to].excess >= delta / karg)
+                        // {
+                        //     lab[label - 1].smallset.remove(&verts[edge.to]);
+                        //     lab[label - 1].mediumset.push(&verts[edge.to]);
+                        //     lactm = min(lactm, label - 1);
+                        //     // --lactm;
+                        //     ret = true;
+                        // }
                     }
                     if (ret)
-                    {
-                        arc[vertex] = i;
                         return true;
-                    }
                 }
-            }
-
-            // for (T i(0); i < verts[vertex].arc; ++i)
-            //     if (push_inner(vertex, label, delta, i))
-            //     {
-            //         verts[vertex].arc = i;
-            //         return true;
-            //     }
-
             return false;
         }
 
-        inline void relabel(const T vertex, const T current_label)
+        inline void relabel(const T vertex, const T current_label, bool med)
         {
             _relabel_progress += BETA;
             auto new_label = calculate_new_label(vertex);
-            lab[current_label].act.remove(&verts[vertex]);
+            if (med)
+                lab[current_label].mediumset.remove(&verts[vertex]);
+            else
+                lab[current_label].largeset.remove(&verts[vertex]);
             verts[vertex].label = new_label;
 
             if (new_label != rnet.size()) // 并非不可达
             {
                 hivert = max(hivert, new_label);
-                hact = max(hact, new_label);
-                lab[new_label].act.push(&verts[vertex]);
+                if (med)
+                {
+                    hactm = max(hactm, new_label);
+                    lab[new_label].mediumset.push(&verts[vertex]);
+                }
+                else
+                {
+                    hactl = max(hactl, new_label);
+                    lab[new_label].largeset.push(&verts[vertex]);
+                }
             }
 
-            if (lab[current_label].act.empty() &&
-                lab[current_label].iact.empty())
+            if (lab[current_label].largeset.empty() &&
+                lab[current_label].mediumset.empty() &&
+                lab[current_label].smallset.empty())
             {
                 gap_relabel(current_label);
                 verts[vertex].label = rnet.size();
             }
-            arc[vertex] = 0;
         }
         /* 抬到正好能漏到一个可用的邻接点 */
         inline T calculate_new_label(const T vertex)
@@ -374,10 +492,8 @@ namespace ahuja_orlin
             return increase_to + 1;
         }
 
-        void global_relabel(const U delta)
+        void global_relabel()
         {
-            fill(arc.get(), arc.get() + rnet.size(), 0);
-
             auto not_reached = rnet.size();
             for (size_t i = 0; i < rnet.size(); ++i)
                 verts[i].label = not_reached;
@@ -387,12 +503,13 @@ namespace ahuja_orlin
 
             for (size_t i = 0; i <= hivert; ++i)
             {
-                lab[i].act.clear();
-                lab[i].iact.clear();
+                lab[i].largeset.clear();
+                lab[i].mediumset.clear();
+                lab[i].smallset.clear();
             }
 
-            lact = rnet.size();
-            hact = hivert = 1;
+            lactm = lactl = rnet.size();
+            hactm = hactl = hivert = 1;
 
             while (!distq.empty())
             {
@@ -408,14 +525,22 @@ namespace ahuja_orlin
                         if (edge.to != _source)
                         {
                             auto *node = &verts[edge.to];
-                            if (verts[edge.to].excess > delta / 2) // 流值相关，只贴大于delta/2的
+                            if (verts[edge.to].excess == 0)
+                                lab[verts[edge.to].label].smallset.push(node);
+                            else if (verts[edge.to].excess >= delta / 2) // 流值相关，只贴大于delta/2的
                             {
-                                lact = min(lact, verts[edge.to].label);
-                                hact = max(hact, verts[edge.to].label);
-                                lab[verts[edge.to].label].act.push(node);
+                                lactl = min(lactl, verts[edge.to].label);
+                                hactl = max(hactl, verts[edge.to].label);
+                                lab[verts[edge.to].label].largeset.push(node);
+                            }
+                            else if (verts[edge.to].excess >= delta / karg) // 流值相关，只贴大于delta/2的
+                            {
+                                lactm = min(lactm, verts[edge.to].label);
+                                hactm = max(hactm, verts[edge.to].label);
+                                lab[verts[edge.to].label].mediumset.push(node);
                             }
                             else
-                                lab[verts[edge.to].label].iact.push(node);
+                                lab[verts[edge.to].label].smallset.push(node);
                         }
                     }
             }
@@ -425,20 +550,26 @@ namespace ahuja_orlin
         {
             for (auto chei = gap_height + 1; chei <= hivert; ++chei)
             {
-                while (!lab[chei].act.empty())
+                while (!lab[chei].largeset.empty())
                 {
-                    auto *ptr = lab[chei].act.pop();
+                    auto *ptr = lab[chei].largeset.pop();
                     auto vertex_idx = get_vertex_idx(ptr);
                     verts[vertex_idx].label = rnet.size();
                 }
-                while (!lab[chei].iact.empty())
+                while (!lab[chei].mediumset.empty())
                 {
-                    auto *ptr = lab[chei].iact.pop();
+                    auto *ptr = lab[chei].mediumset.pop();
+                    auto vertex_idx = get_vertex_idx(ptr);
+                    verts[vertex_idx].label = rnet.size();
+                }
+                while (!lab[chei].smallset.empty())
+                {
+                    auto *ptr = lab[chei].smallset.pop();
                     auto vertex_idx = get_vertex_idx(ptr);
                     verts[vertex_idx].label = rnet.size();
                 }
             }
-            hivert = hact = gap_height - 1;
+            hivert = hactm = hactl = gap_height - 1;
         }
     };
 }
@@ -741,3 +872,17 @@ PyMODINIT_FUNC PyInit_ao(void) // 必须是PyInit_{setup.py中提供的模块名
 // C:\\etc\\VisualStudio\\2019\\Community\\VC\\Tools\\MSVC\\14.29.30133\\bin\\HostX86\\x64\\cl.exe
 
 #endif
+
+/*
+4 5
+1 2 2
+2 3 2
+4 2 3
+4 3 1
+1 3 1
+3
+1 4
+2 4
+2 3
+
+*/
