@@ -1,4 +1,15 @@
-#include <bits/stdc++.h>
+// #include <bits/stdc++.h>
+#include <iostream>
+#include <vector>
+#include <unordered_set>
+#include <unordered_map>
+#include <algorithm>
+#include <cassert>
+#include <queue>
+#include <numeric>
+#include <list>
+#include <cmath>
+
 using namespace std;
 #define vec vector
 #define mp unordered_map
@@ -11,8 +22,6 @@ struct pair_hash
     template <class T, class W>
     size_t operator()(pair<T, W> const &p) const { return h(h(0, p.first), p.second); }
 };
-
-int n, m;
 
 struct GoldbergRao
 {
@@ -49,7 +58,7 @@ struct GoldbergRao
         vec<char> blocked;       // bool数组
         vec<T> excess;
         // 边
-        vec<mp<int, us<pair<int, int>, pair_hash>>> emembers;
+        vec<mp<int, vec<pair<int, int>>>> emembers;
         // 图变量
         int start_mapping, end_mapping;
         ContractedGraph(int n) : Graph(n),
@@ -57,7 +66,7 @@ struct GoldbergRao
                                  distances(n, 0),
                                  representative(n, 0),
                                  blocked(n, false),
-                                 emembers(n, mp<int, us<pair<int, int>, pair_hash>>()),
+                                 emembers(n, mp<int, vec<pair<int, int>>>()),
                                  pred(n, vec<int>()),
                                  excess(n, 0) {}
         mp<int, Edge>::iterator add_edge_directed(int u, int v, T cap)
@@ -110,7 +119,7 @@ struct GoldbergRao
     {
         dist.assign(N, INF);
         dist[t] = 0;
-        vec<us<int>> buckets(n);
+        vec<us<int>> buckets(N);
         int bucket_idx = 0;
         buckets[0].emplace(t);
         while (1)
@@ -249,7 +258,7 @@ struct GoldbergRao
                     auto it = C.emembers[mu].find(mv);
                     if (it != C.emembers[mu].end())
                     {
-                        it->second.emplace(u, v);
+                        it->second.emplace_back(u, v);
                         C.E[mu][mv].capacity += get_residual_cap(u, v);
                         assert(R.E[u][v].len == C.E[mu][mv].len);
                     }
@@ -258,7 +267,7 @@ struct GoldbergRao
                         auto em = C.add_edge_directed(mu, mv, get_residual_cap(u, v));
                         // em->second.flow = 0; // 其实没必要写
                         em->second.len = R.E[u][v].len;
-                        C.emembers[mu][mv].emplace(u, v);
+                        C.emembers[mu][mv].emplace_back(u, v);
                     }
                 }
             }
@@ -450,8 +459,12 @@ struct GoldbergRao
         auto first_active = [&]() -> list<int>::iterator
         {
             auto vp = L.begin();
-            while (vp != L.end() && *vp != start_node && *vp != end_node && C.excess[*vp] > 0)
+            while (vp != L.end())
+            {
+                if (*vp != start_node && *vp != end_node && C.excess[*vp] > 0)
+                    return vp;
                 ++vp;
+            }
             return vp;
         };
         auto vp = first_active();
@@ -532,7 +545,7 @@ struct GoldbergRao
                     T flow_to_route = min(remaining_edge_flow, get_residual_cap(start_vert, end_vert));
                     update_flow(start_vert, end_vert, flow_to_route);
                     nflow[start_vert] -= flow_to_route; /**/
-                    nflow[end_vert] += flow_routed;
+                    nflow[end_vert] += flow_to_route;
                     if (flow_to_route == remaining_edge_flow)
                         break;
                     remaining_edge_flow -= flow_to_route;
@@ -542,8 +555,12 @@ struct GoldbergRao
             if (C.members[v].size() >= 2)
             {
                 int rep = C.representative[v];
+                // if (C.representative.size() == 2 and rep == 0 and v == 0 && start_node == 1 && end_node == 2)
+                // cerr << "e";
                 T flow_in = route_in_flow_tree(rep);
                 T flow_out = route_out_flow_tree(rep);
+                // if (flow_in != flow_out)
+                // std::cerr << "err";
                 assert(flow_in == flow_out);
             }
     }
@@ -634,6 +651,8 @@ struct GoldbergRao
                 total_routed_flow += flow_routed;
                 if (flow_routed == 0)
                     return total_routed_flow;
+                // if (R.E[1][0].capacity == 132 && R.E[1][0].flow == 129)
+                // cerr << "e";
                 translate_flow_from_contraction_to_original(contracted_graph, s, t, flow_routed);
             }
         }
@@ -641,13 +660,14 @@ struct GoldbergRao
     }
 } * gr;
 
-vec<int> I{-1, 0, 1, 2, 3, -1}, J{1, 2, 3, 4};
+// vec<int> I{-1, 0, 1, 2, 3, 4, 5, 6, 7},
+// J{1, 2, 3, 4, 5, 6, 7, 8};
+vec<int> I, J;
 
 void with_clean_data(int n, int m)
 {
     using T = int;
     mp<int, T> P;
-    // I.assign(n + 1, -1);
     us<int> S;
     while (m--)
     {
@@ -668,12 +688,13 @@ void with_clean_data(int n, int m)
             P[k] = w;
     }
     int ctr = 0;
-    // J.reserve(S.size());
-    // for (auto k : S)
-    // {
-    //     I[k] = ctr++;
-    //     J.emplace_back(k);
-    // }
+    I.assign(n + 1, -1);
+    J.reserve(S.size());
+    for (auto k : S)
+    {
+        I[k] = ctr++;
+        J.emplace_back(k);
+    }
     int nn = S.size();
     int mm = P.size();
 
@@ -690,6 +711,7 @@ void with_clean_data(int n, int m)
 vec<int> node, tmp1, tmp2;
 vec<vec<int>> ans;
 vec<int> d;
+int n, m;
 
 void work(int l, int r)
 {
