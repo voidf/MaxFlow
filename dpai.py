@@ -18,9 +18,11 @@ exes = [
     # 'zxg.exe',
     # 'ao.exe',
     # 'diniczxgs.exe',
-    # 'aomodule.exe',
-    'aomodulell.exe',
+    'aomodule.exe',
+    'hlpp.exe',
+    # 'aomodulell.exe',
     'gold.exe',
+    'goldv1.exe',
     # 'aomodulev1.exe',
     # 'LMESmodule.exe',
     # 'LMESmodulev2.exe',
@@ -31,16 +33,17 @@ exes = [
 
 # 这是一个图论题的数据生成器，该题目在洛谷的题号为P1339
 for T in range(400, 9999): # 即在[1, 4)范围内循环，也就是从1到3
-    # fn = f'T{T:03d}'
-    fn = f'T'
+    fn = f'T{T:03d}'
+    # fn = f'T'
     test_data = IO(file_prefix=fn) # 生成 heat[1|2|3].in/out 三组测试数据
     tim = datetime.datetime.now()
 
-    n = randint(100, 100)
+    n = randint(100, 1000)
     m = randint(n - 1, n * (n - 1)//2) # 边数
     # m = randint(n - 1, 2 * n) # 稀疏图
     # U = 1000_000_000
-    U = 1000
+    # U = 100
+    U = randint(10, int(2e9 / m))
     # s = randint(1, n) # 源点，随机选取一个
     # s = randint(1, n//2) # 源点，随机选取一个
     # t = randint(n//2+1, n) # 汇点，随机选取一个

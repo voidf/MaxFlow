@@ -227,7 +227,7 @@ namespace ahuja_orlin
         {
             auto K = static_cast<U>(ceil(log2(ceil(_max_cap)))); // 流值相关，过大可能有溢出风险。logU的来源，不(能很好)支持浮点
             global_relabel(_max_cap);
-            for (U k = 0; k <= K; ++k)
+            for (U k = 0; k <= K; ++k) // log(U)
             {
                 auto delta = static_cast<U>(pow(2, K - k)); // 流值相关
 

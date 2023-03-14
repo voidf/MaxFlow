@@ -781,3 +781,6 @@
 2023-03-14 02:55:21.048 | INFO     | __main__:<module>:99 - 404 n:100, m:1189, U:1000 aomodulell.exe:0.023999 gold.exe:3.619942
 2023-03-14 02:55:35.168 | INFO     | __main__:<module>:99 - 405 n:100, m:3473, U:1000 aomodulell.exe:0.031001 gold.exe:14.022262
 2023-03-14 02:55:37.659 | INFO     | __main__:<module>:99 - 406 n:100, m:826, U:999 aomodulell.exe:0.023001 gold.exe:2.425474
+2023-03-14 23:52:52.265 | INFO     | __main__:<module>:99 - 400 n:100, m:3607, U:1000 aomodulell.exe:0.032002 gold.exe:14.379558
+2023-03-14 23:53:07.182 | INFO     | __main__:<module>:99 - 401 n:100, m:3667, U:1000 aomodulell.exe:0.031538 gold.exe:14.799446
+2023-03-14 23:53:17.085 | INFO     | __main__:<module>:99 - 402 n:100, m:2714, U:1000 aomodulell.exe:0.030002 gold.exe:9.814513

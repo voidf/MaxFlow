@@ -1,0 +1,198 @@
+ctr_bf:48 ctr_translate:121 ctr_li:95495 ctr_scc:121 ctr_sccedge:581042 
+blockingflow:480400 translate:160600 scc:2.29892e+07 distance_metric:1.44767e+07 mini cut:4.8633e+06 
+ctr_bf:47 ctr_translate:121 ctr_li:104279 ctr_scc:121 ctr_sccedge:581042 
+blockingflow:526000 translate:182500 scc:2.42496e+07 distance_metric:1.52398e+07 mini cut:5.0907e+06 
+ctr_bf:50 ctr_translate:124 ctr_li:108945 ctr_scc:124 ctr_sccedge:595448 
+blockingflow:522900 translate:168200 scc:2.37743e+07 distance_metric:1.48234e+07 mini cut:5.0837e+06 
+ctr_bf:38 ctr_translate:121 ctr_li:57242 ctr_scc:121 ctr_sccedge:581042 
+blockingflow:354100 translate:161000 scc:2.28239e+07 distance_metric:1.57786e+07 mini cut:4.2724e+06 
+ctr_bf:43 ctr_translate:114 ctr_li:40361 ctr_scc:114 ctr_sccedge:547428 
+blockingflow:309600 translate:143300 scc:2.07821e+07 distance_metric:1.39781e+07 mini cut:4.5407e+06 
+ctr_bf:46 ctr_translate:122 ctr_li:104263 ctr_scc:122 ctr_sccedge:585844 
+blockingflow:516800 translate:181100 scc:2.41828e+07 distance_metric:1.59824e+07 mini cut:5.3306e+06 
+ctr_bf:42 ctr_translate:121 ctr_li:111085 ctr_scc:121 ctr_sccedge:581042 
+blockingflow:540300 translate:171700 scc:2.32599e+07 distance_metric:1.48149e+07 mini cut:4.4618e+06 
+ctr_bf:51 ctr_translate:123 ctr_li:92762 ctr_scc:123 ctr_sccedge:590646 
+blockingflow:517600 translate:178000 scc:2.41992e+07 distance_metric:1.47676e+07 mini cut:5.2213e+06 
+ctr_bf:41 ctr_translate:119 ctr_li:77633 ctr_scc:119 ctr_sccedge:571438 
+blockingflow:411400 translate:154600 scc:2.15449e+07 distance_metric:1.43172e+07 mini cut:4.3859e+06 
+ctr_bf:41 ctr_translate:116 ctr_li:107670 ctr_scc:116 ctr_sccedge:557032 
+blockingflow:509400 translate:155400 scc:2.14294e+07 distance_metric:1.3939e+07 mini cut:4.393e+06 
+ctr_bf:40 ctr_translate:119 ctr_li:88859 ctr_scc:119 ctr_sccedge:571438 
+blockingflow:462600 translate:158100 scc:2.19817e+07 distance_metric:1.43065e+07 mini cut:4.3083e+06 
+ctr_bf:49 ctr_translate:121 ctr_li:105090 ctr_scc:121 ctr_sccedge:581042 
+blockingflow:512100 translate:166200 scc:2.29045e+07 distance_metric:1.43923e+07 mini cut:4.9963e+06 
+ctr_bf:39 ctr_translate:110 ctr_li:9898 ctr_scc:110 ctr_sccedge:528220 
+blockingflow:162000 translate:129200 scc:1.87567e+07 distance_metric:1.34857e+07 mini cut:4.1273e+06 
+ctr_bf:46 ctr_translate:120 ctr_li:59652 ctr_scc:120 ctr_sccedge:576240 
+blockingflow:442900 translate:170200 scc:2.40684e+07 distance_metric:1.55815e+07 mini cut:5.1247e+06 
+ctr_bf:44 ctr_translate:119 ctr_li:68321 ctr_scc:119 ctr_sccedge:571438 
+blockingflow:416200 translate:162100 scc:2.23673e+07 distance_metric:1.45088e+07 mini cut:4.9851e+06 
+ctr_bf:43 ctr_translate:119 ctr_li:85346 ctr_scc:119 ctr_sccedge:571438 
+blockingflow:504400 translate:162100 scc:2.26229e+07 distance_metric:1.43964e+07 mini cut:4.4823e+06 
+ctr_bf:51 ctr_translate:120 ctr_li:92342 ctr_scc:120 ctr_sccedge:576240 
+blockingflow:510600 translate:173800 scc:2.31233e+07 distance_metric:1.44477e+07 mini cut:5.0861e+06 
+ctr_bf:44 ctr_translate:119 ctr_li:91273 ctr_scc:119 ctr_sccedge:571438 
+blockingflow:487000 translate:162300 scc:2.2288e+07 distance_metric:1.41981e+07 mini cut:4.5499e+06 
+ctr_bf:37 ctr_translate:112 ctr_li:50197 ctr_scc:112 ctr_sccedge:537824 
+blockingflow:344700 translate:145000 scc:1.99863e+07 distance_metric:1.32873e+07 mini cut:3.912e+06 
+ctr_bf:46 ctr_translate:121 ctr_li:104361 ctr_scc:121 ctr_sccedge:581042 
+blockingflow:539000 translate:173400 scc:2.33271e+07 distance_metric:1.45305e+07 mini cut:4.8088e+06 
+ctr_bf:36 ctr_translate:118 ctr_li:91132 ctr_scc:118 ctr_sccedge:566636 
+blockingflow:485300 translate:174600 scc:2.34625e+07 distance_metric:1.54728e+07 mini cut:4.3754e+06 
+ctr_bf:41 ctr_translate:119 ctr_li:54499 ctr_scc:119 ctr_sccedge:571438 
+blockingflow:425700 translate:179900 scc:2.4501e+07 distance_metric:1.69876e+07 mini cut:5.0961e+06 
+ctr_bf:39 ctr_translate:117 ctr_li:93947 ctr_scc:117 ctr_sccedge:561834 
+blockingflow:466300 translate:155100 scc:2.1245e+07 distance_metric:1.43245e+07 mini cut:4.2543e+06 
+ctr_bf:43 ctr_translate:120 ctr_li:88872 ctr_scc:120 ctr_sccedge:576240 
+blockingflow:462400 translate:158000 scc:2.17174e+07 distance_metric:1.43592e+07 mini cut:4.5136e+06 
+ctr_bf:51 ctr_translate:121 ctr_li:132845 ctr_scc:121 ctr_sccedge:581042 
+blockingflow:620400 translate:175100 scc:2.28405e+07 distance_metric:1.45872e+07 mini cut:5.1473e+06 
+ctr_bf:42 ctr_translate:113 ctr_li:82154 ctr_scc:113 ctr_sccedge:542626 
+blockingflow:478700 translate:164900 scc:2.19873e+07 distance_metric:1.36537e+07 mini cut:4.5388e+06 
+ctr_bf:43 ctr_translate:123 ctr_li:118235 ctr_scc:123 ctr_sccedge:590646 
+blockingflow:601200 translate:174800 scc:2.4418e+07 distance_metric:1.49189e+07 mini cut:4.7959e+06 
+ctr_bf:40 ctr_translate:120 ctr_li:77225 ctr_scc:120 ctr_sccedge:576240 
+blockingflow:434300 translate:160500 scc:2.1846e+07 distance_metric:1.42379e+07 mini cut:4.2916e+06 
+ctr_bf:43 ctr_translate:120 ctr_li:75274 ctr_scc:120 ctr_sccedge:576240 
+blockingflow:438200 translate:159400 scc:2.20044e+07 distance_metric:1.4271e+07 mini cut:4.5516e+06 
+ctr_bf:42 ctr_translate:117 ctr_li:40136 ctr_scc:117 ctr_sccedge:561834 
+blockingflow:320500 translate:147200 scc:2.08961e+07 distance_metric:1.42076e+07 mini cut:4.3963e+06 
+ctr_bf:46 ctr_translate:120 ctr_li:96741 ctr_scc:120 ctr_sccedge:576240 
+blockingflow:498000 translate:162000 scc:2.19872e+07 distance_metric:1.44489e+07 mini cut:4.7257e+06 
+ctr_bf:42 ctr_translate:124 ctr_li:109927 ctr_scc:124 ctr_sccedge:595448 
+blockingflow:522000 translate:166500 scc:2.27309e+07 distance_metric:1.46893e+07 mini cut:4.3929e+06 
+ctr_bf:47 ctr_translate:123 ctr_li:88447 ctr_scc:123 ctr_sccedge:590646 
+blockingflow:484100 translate:163100 scc:2.28071e+07 distance_metric:1.4614e+07 mini cut:4.8466e+06 
+ctr_bf:37 ctr_translate:114 ctr_li:15383 ctr_scc:114 ctr_sccedge:547428 
+blockingflow:245500 translate:143700 scc:2.0219e+07 distance_metric:1.39028e+07 mini cut:4.077e+06 
+ctr_bf:43 ctr_translate:122 ctr_li:76939 ctr_scc:122 ctr_sccedge:585844 
+blockingflow:473200 translate:164200 scc:2.27711e+07 distance_metric:1.46434e+07 mini cut:4.5779e+06 
+ctr_bf:42 ctr_translate:122 ctr_li:116432 ctr_scc:122 ctr_sccedge:585844 
+blockingflow:558900 translate:169300 scc:2.25094e+07 distance_metric:1.46142e+07 mini cut:4.4546e+06 
+ctr_bf:41 ctr_translate:120 ctr_li:81191 ctr_scc:120 ctr_sccedge:576240 
+blockingflow:458400 translate:160300 scc:2.16241e+07 distance_metric:1.44725e+07 mini cut:4.3089e+06 
+ctr_bf:50 ctr_translate:117 ctr_li:62185 ctr_scc:117 ctr_sccedge:561834 
+blockingflow:413900 translate:158800 scc:2.16457e+07 distance_metric:1.41666e+07 mini cut:4.963e+06 
+ctr_bf:44 ctr_translate:121 ctr_li:148135 ctr_scc:121 ctr_sccedge:581042 
+blockingflow:652900 translate:169300 scc:2.25996e+07 distance_metric:1.47942e+07 mini cut:4.5516e+06 
+ctr_bf:38 ctr_translate:115 ctr_li:43543 ctr_scc:115 ctr_sccedge:552230 
+blockingflow:349200 translate:148100 scc:2.08434e+07 distance_metric:1.36993e+07 mini cut:4.1172e+06 
+ctr_bf:50 ctr_translate:123 ctr_li:94575 ctr_scc:123 ctr_sccedge:590646 
+blockingflow:500000 translate:163600 scc:2.2441e+07 distance_metric:1.46241e+07 mini cut:4.9709e+06 
+ctr_bf:42 ctr_translate:116 ctr_li:45149 ctr_scc:116 ctr_sccedge:557032 
+blockingflow:358200 translate:151600 scc:2.13984e+07 distance_metric:1.38991e+07 mini cut:4.4367e+06 
+ctr_bf:46 ctr_translate:121 ctr_li:96861 ctr_scc:121 ctr_sccedge:581042 
+blockingflow:523300 translate:163100 scc:2.24106e+07 distance_metric:1.435e+07 mini cut:4.6954e+06 
+ctr_bf:43 ctr_translate:122 ctr_li:52869 ctr_scc:122 ctr_sccedge:585844 
+blockingflow:367400 translate:155500 scc:2.17306e+07 distance_metric:1.45026e+07 mini cut:4.4508e+06 
+ctr_bf:37 ctr_translate:121 ctr_li:76138 ctr_scc:121 ctr_sccedge:581042 
+blockingflow:403800 translate:150400 scc:2.10639e+07 distance_metric:1.43341e+07 mini cut:4.01e+06 
+ctr_bf:43 ctr_translate:116 ctr_li:44610 ctr_scc:116 ctr_sccedge:557032 
+blockingflow:323300 translate:147000 scc:2.04655e+07 distance_metric:1.382e+07 mini cut:4.4155e+06 
+ctr_bf:46 ctr_translate:121 ctr_li:84734 ctr_scc:121 ctr_sccedge:581042 
+blockingflow:454800 translate:157900 scc:2.1859e+07 distance_metric:1.44306e+07 mini cut:4.7151e+06 
+ctr_bf:49 ctr_translate:125 ctr_li:114783 ctr_scc:125 ctr_sccedge:600250 
+blockingflow:568200 translate:169600 scc:2.31663e+07 distance_metric:1.48638e+07 mini cut:5.0096e+06 
+ctr_bf:42 ctr_translate:116 ctr_li:78875 ctr_scc:116 ctr_sccedge:557032 
+blockingflow:453700 translate:155000 scc:2.10594e+07 distance_metric:1.38298e+07 mini cut:4.3905e+06 
+ctr_bf:36 ctr_translate:119 ctr_li:116674 ctr_scc:119 ctr_sccedge:571438 
+blockingflow:545700 translate:160800 scc:2.1665e+07 distance_metric:1.40585e+07 mini cut:3.9554e+06 
+ctr_bf:34 ctr_translate:116 ctr_li:57123 ctr_scc:116 ctr_sccedge:557032 
+blockingflow:359500 translate:144900 scc:2.02772e+07 distance_metric:1.38954e+07 mini cut:3.7636e+06 
+ctr_bf:40 ctr_translate:120 ctr_li:124164 ctr_scc:120 ctr_sccedge:576240 
+blockingflow:591800 translate:174800 scc:2.28733e+07 distance_metric:1.47761e+07 mini cut:4.46e+06 
+ctr_bf:47 ctr_translate:123 ctr_li:93994 ctr_scc:123 ctr_sccedge:590646 
+blockingflow:496400 translate:168400 scc:2.26944e+07 distance_metric:1.46577e+07 mini cut:4.8009e+06 
+ctr_bf:36 ctr_translate:120 ctr_li:52479 ctr_scc:120 ctr_sccedge:576240 
+blockingflow:343300 translate:153000 scc:2.13716e+07 distance_metric:1.40867e+07 mini cut:3.9808e+06 
+ctr_bf:45 ctr_translate:118 ctr_li:96850 ctr_scc:118 ctr_sccedge:566636 
+blockingflow:481800 translate:155700 scc:2.12274e+07 distance_metric:1.40415e+07 mini cut:4.6872e+06 
+ctr_bf:43 ctr_translate:122 ctr_li:121666 ctr_scc:122 ctr_sccedge:585844 
+blockingflow:591400 translate:176100 scc:2.27588e+07 distance_metric:1.45459e+07 mini cut:4.6288e+06 
+ctr_bf:59 ctr_translate:124 ctr_li:128800 ctr_scc:124 ctr_sccedge:595448 
+blockingflow:619500 translate:170700 scc:2.34991e+07 distance_metric:1.49678e+07 mini cut:5.6102e+06 
+ctr_bf:44 ctr_translate:123 ctr_li:83497 ctr_scc:123 ctr_sccedge:590646 
+blockingflow:477700 translate:163000 scc:2.25416e+07 distance_metric:1.44447e+07 mini cut:4.7707e+06 
+ctr_bf:41 ctr_translate:121 ctr_li:99986 ctr_scc:121 ctr_sccedge:581042 
+blockingflow:508300 translate:161500 scc:2.22006e+07 distance_metric:1.4781e+07 mini cut:4.4898e+06 
+ctr_bf:46 ctr_translate:116 ctr_li:61133 ctr_scc:116 ctr_sccedge:557032 
+blockingflow:390200 translate:154900 scc:2.13388e+07 distance_metric:1.38809e+07 mini cut:4.7159e+06 
+ctr_bf:44 ctr_translate:121 ctr_li:123190 ctr_scc:121 ctr_sccedge:581042 
+blockingflow:552600 translate:164000 scc:2.18996e+07 distance_metric:1.44931e+07 mini cut:4.6274e+06 
+ctr_bf:42 ctr_translate:121 ctr_li:61205 ctr_scc:121 ctr_sccedge:581042 
+blockingflow:381800 translate:151100 scc:2.16275e+07 distance_metric:1.45638e+07 mini cut:4.4569e+06 
+ctr_bf:50 ctr_translate:126 ctr_li:143493 ctr_scc:126 ctr_sccedge:605052 
+blockingflow:657200 translate:177900 scc:2.45476e+07 distance_metric:1.53085e+07 mini cut:5.0436e+06 
+ctr_bf:39 ctr_translate:121 ctr_li:79354 ctr_scc:121 ctr_sccedge:581042 
+blockingflow:449400 translate:166100 scc:2.22488e+07 distance_metric:1.47872e+07 mini cut:4.461e+06 
+ctr_bf:42 ctr_translate:118 ctr_li:101282 ctr_scc:118 ctr_sccedge:566636 
+blockingflow:511200 translate:161600 scc:2.22852e+07 distance_metric:1.44396e+07 mini cut:4.5864e+06 
+ctr_bf:37 ctr_translate:110 ctr_li:63767 ctr_scc:110 ctr_sccedge:528220 
+blockingflow:405500 translate:195500 scc:2.46304e+07 distance_metric:1.81606e+07 mini cut:5.1125e+06 
+ctr_bf:46 ctr_translate:118 ctr_li:31798 ctr_scc:118 ctr_sccedge:566636 
+blockingflow:423300 translate:187200 scc:2.53169e+07 distance_metric:1.63696e+07 mini cut:5.9805e+06 
+ctr_bf:49 ctr_translate:120 ctr_li:94060 ctr_scc:120 ctr_sccedge:576240 
+blockingflow:494500 translate:185200 scc:2.39185e+07 distance_metric:1.68469e+07 mini cut:5.4256e+06 
+ctr_bf:45 ctr_translate:119 ctr_li:93871 ctr_scc:119 ctr_sccedge:571438 
+blockingflow:516400 translate:171300 scc:2.22516e+07 distance_metric:1.43019e+07 mini cut:4.6945e+06 
+ctr_bf:37 ctr_translate:116 ctr_li:30994 ctr_scc:116 ctr_sccedge:557032 
+blockingflow:316100 translate:147800 scc:2.09996e+07 distance_metric:1.42992e+07 mini cut:4.0953e+06 
+ctr_bf:43 ctr_translate:117 ctr_li:54198 ctr_scc:117 ctr_sccedge:561834 
+blockingflow:372300 translate:154400 scc:2.10178e+07 distance_metric:1.41729e+07 mini cut:4.5271e+06 
+ctr_bf:37 ctr_translate:111 ctr_li:68019 ctr_scc:111 ctr_sccedge:533022 
+blockingflow:395100 translate:149300 scc:2.02503e+07 distance_metric:1.34687e+07 mini cut:4.037e+06 
+ctr_bf:40 ctr_translate:120 ctr_li:63946 ctr_scc:120 ctr_sccedge:576240 
+blockingflow:405600 translate:158700 scc:2.15557e+07 distance_metric:1.44916e+07 mini cut:4.2658e+06 
+ctr_bf:37 ctr_translate:112 ctr_li:34820 ctr_scc:112 ctr_sccedge:537824 
+blockingflow:288300 translate:137200 scc:1.96831e+07 distance_metric:1.34051e+07 mini cut:3.9918e+06 
+ctr_bf:46 ctr_translate:125 ctr_li:109085 ctr_scc:125 ctr_sccedge:600250 
+blockingflow:573200 translate:171900 scc:2.33996e+07 distance_metric:1.49511e+07 mini cut:4.7246e+06 
+ctr_bf:44 ctr_translate:121 ctr_li:124430 ctr_scc:121 ctr_sccedge:581042 
+blockingflow:597700 translate:172200 scc:2.29801e+07 distance_metric:1.4621e+07 mini cut:4.7068e+06 
+ctr_bf:49 ctr_translate:120 ctr_li:125995 ctr_scc:120 ctr_sccedge:576240 
+blockingflow:1.1195e+06 translate:186300 scc:2.55541e+07 distance_metric:1.67733e+07 mini cut:5.9837e+06 
+ctr_bf:41 ctr_translate:117 ctr_li:69390 ctr_scc:117 ctr_sccedge:561834 
+blockingflow:430500 translate:155300 scc:2.12314e+07 distance_metric:1.4212e+07 mini cut:4.464e+06 
+ctr_bf:37 ctr_translate:119 ctr_li:62344 ctr_scc:119 ctr_sccedge:571438 
+blockingflow:392600 translate:164700 scc:2.21279e+07 distance_metric:1.53269e+07 mini cut:4.2599e+06 
+ctr_bf:45 ctr_translate:121 ctr_li:81360 ctr_scc:121 ctr_sccedge:581042 
+blockingflow:483300 translate:185500 scc:2.41069e+07 distance_metric:1.65143e+07 mini cut:5.0776e+06 
+ctr_bf:39 ctr_translate:115 ctr_li:146715 ctr_scc:115 ctr_sccedge:552230 
+blockingflow:628200 translate:154300 scc:2.11186e+07 distance_metric:1.37889e+07 mini cut:4.2404e+06 
+ctr_bf:44 ctr_translate:118 ctr_li:60148 ctr_scc:118 ctr_sccedge:566636 
+blockingflow:400400 translate:150400 scc:2.12441e+07 distance_metric:1.42854e+07 mini cut:4.6199e+06 
+ctr_bf:39 ctr_translate:123 ctr_li:121444 ctr_scc:123 ctr_sccedge:590646 
+blockingflow:567500 translate:160600 scc:2.22165e+07 distance_metric:1.45722e+07 mini cut:4.1752e+06 
+ctr_bf:45 ctr_translate:120 ctr_li:74690 ctr_scc:120 ctr_sccedge:576240 
+blockingflow:431400 translate:153300 scc:2.15029e+07 distance_metric:1.44372e+07 mini cut:4.6709e+06 
+ctr_bf:44 ctr_translate:121 ctr_li:94126 ctr_scc:121 ctr_sccedge:581042 
+blockingflow:507800 translate:159400 scc:2.20149e+07 distance_metric:1.45161e+07 mini cut:4.5831e+06 
+ctr_bf:38 ctr_translate:114 ctr_li:112221 ctr_scc:114 ctr_sccedge:547428 
+blockingflow:546000 translate:151400 scc:2.09157e+07 distance_metric:1.36142e+07 mini cut:4.1288e+06 
+ctr_bf:43 ctr_translate:119 ctr_li:129629 ctr_scc:119 ctr_sccedge:571438 
+blockingflow:596400 translate:156700 scc:2.17236e+07 distance_metric:1.41453e+07 mini cut:4.5152e+06 
+ctr_bf:40 ctr_translate:122 ctr_li:102348 ctr_scc:122 ctr_sccedge:585844 
+blockingflow:523700 translate:163800 scc:2.21329e+07 distance_metric:1.45686e+07 mini cut:4.2606e+06 
+ctr_bf:38 ctr_translate:113 ctr_li:11851 ctr_scc:113 ctr_sccedge:542626 
+blockingflow:222500 translate:139800 scc:2.00405e+07 distance_metric:1.3744e+07 mini cut:4.0934e+06 
+ctr_bf:54 ctr_translate:126 ctr_li:128140 ctr_scc:126 ctr_sccedge:605052 
+blockingflow:610200 translate:179400 scc:2.39773e+07 distance_metric:1.49449e+07 mini cut:5.3348e+06 
+ctr_bf:44 ctr_translate:117 ctr_li:78278 ctr_scc:117 ctr_sccedge:561834 
+blockingflow:452500 translate:151700 scc:2.10506e+07 distance_metric:1.39212e+07 mini cut:4.5195e+06 
+ctr_bf:41 ctr_translate:123 ctr_li:115584 ctr_scc:123 ctr_sccedge:590646 
+blockingflow:552600 translate:160400 scc:2.21658e+07 distance_metric:1.46595e+07 mini cut:4.3056e+06 
+ctr_bf:48 ctr_translate:124 ctr_li:89440 ctr_scc:124 ctr_sccedge:595448 
+blockingflow:526800 translate:176600 scc:2.37293e+07 distance_metric:1.48028e+07 mini cut:5.0302e+06 
+ctr_bf:48 ctr_translate:123 ctr_li:135697 ctr_scc:123 ctr_sccedge:590646 
+blockingflow:649800 translate:171200 scc:2.29633e+07 distance_metric:1.47082e+07 mini cut:4.9617e+06 
+ctr_bf:42 ctr_translate:119 ctr_li:30539 ctr_scc:119 ctr_sccedge:571438 
+blockingflow:295900 translate:146700 scc:2.0995e+07 distance_metric:1.41698e+07 mini cut:4.2751e+06 
+ctr_bf:47 ctr_translate:120 ctr_li:107741 ctr_scc:120 ctr_sccedge:576240 
+blockingflow:571700 translate:166500 scc:2.2158e+07 distance_metric:1.42898e+07 mini cut:4.7784e+06 
+ctr_bf:38 ctr_translate:117 ctr_li:56899 ctr_scc:117 ctr_sccedge:561834 
+blockingflow:363700 translate:150000 scc:2.07577e+07 distance_metric:1.40544e+07 mini cut:4.1383e+06 
+ctr_bf:47 ctr_translate:118 ctr_li:31613 ctr_scc:118 ctr_sccedge:566636 
+blockingflow:315600 translate:146600 scc:2.10494e+07 distance_metric:1.42173e+07 mini cut:4.8123e+06 
+ctr_bf:42 ctr_translate:122 ctr_li:98439 ctr_scc:122 ctr_sccedge:585844 
+blockingflow:510800 translate:164700 scc:2.23643e+07 distance_metric:1.49593e+07 mini cut:4.4595e+06 

@@ -16,6 +16,7 @@ using namespace std;
 #define mp unordered_map
 #define us unordered_set
 
+
 struct GoldbergRao
 {
     using T = int;
@@ -47,7 +48,7 @@ struct GoldbergRao
         vec<vec<int>> pred;    // 反图
         vec<vec<int>> members; // 有单点查in操作
         vec<int> distances;
-        vec<char> blocked; // bool数组
+        vec<char> blocked;       // bool数组
         vec<T> excess;
         // 边
         vec<mp<int, vec<pair<int, int>>>> emembers;
@@ -471,8 +472,6 @@ struct GoldbergRao
         // auto begintime = chrono::steady_clock::now();
         // ++ctr_bf;
         // list<int> actives;
-        vec<int> actives;
-        actives.reserve(C.E.size());
 
         C.blocked.assign(C.E.size(), false);
         C.excess.assign(C.E.size(), 0);
@@ -489,8 +488,8 @@ struct GoldbergRao
             T delta = min(C.excess[u], C.E[u][v].capacity - C.E[u][v].flow);
             C.E[u][v].flow += delta; // 这里没给反边加流量，有点怪
             C.excess[v] += delta;
-            if (C.excess[v] > 0 && v != start_node && v != end_node)
-                actives.emplace_back(v);
+            // if (C.excess[v] > 0 && v != start_node && v != end_node)
+                // actives.emplace_back(v);
             C.excess[u] -= delta;
         };
         auto pull = [&](int u, int v)
@@ -499,8 +498,8 @@ struct GoldbergRao
             C.E[u][v].flow -= delta;
             C.excess[v] -= delta;
             C.excess[u] += delta;
-            if (C.excess[u] > 0 && u != start_node && u != end_node)
-                actives.emplace_back(u);
+            // if (C.excess[u] > 0 && u != start_node && u != end_node)
+                // actives.emplace_back(u);
         };
         auto discharge = [&](int v)
         {
@@ -522,41 +521,42 @@ struct GoldbergRao
             throw "Unexpected discharge behaviour";
         };
         // toposort
-        // auto L = topological_sort(C.E);
+        auto L = topological_sort(C.E);
         // end toposort
-
+        // actives.reserve(C.E.size());
+        
         // for (auto i : L)
-        for (int i = 0; i < C.E.size(); ++i)
-            if (i != start_node && i != end_node && C.excess[i] > 0)
-                actives.emplace_back(i);
+        // for (int i=0;i<C.E.size();++i)
+        //     if (i != start_node && i != end_node && C.excess[i] > 0)
+        //         actives.emplace_back(i);
 
-        // auto first_active = [&]() -> list<int>::iterator
-        // {
-        //     auto vp = L.begin();
-        //     while (vp != L.end())
-        //     {
-        //         if (*vp != start_node && *vp != end_node && C.excess[*vp] > 0)
-        //             return vp;
-        //         ++vp;
-        //         // ++ctr_li;
-        //     }
-        //     return vp;
-        // };
-        // auto vp = first_active();
-        // while (vp != L.end())
-        while (actives.size())
+        auto first_active = [&]() -> list<int>::iterator
+        {
+            auto vp = L.begin();
+            while (vp != L.end())
+            {
+                if (*vp != start_node && *vp != end_node && C.excess[*vp] > 0)
+                    return vp;
+                ++vp;
+                // ++ctr_li;
+            }
+            return vp;
+        };
+        auto vp = first_active();
+        while (vp != L.end())
+        // while (actives.size())
         {
             // ++ctr_li;
-            auto vv = actives.back();
-            actives.pop_back();
-            discharge(vv);
-            // discharge(*vp);
-            // if (C.blocked[*vp])
-            // {
-            // L.emplace_front(*vp);
-            // L.erase(vp);
-            // }
-            // vp = first_active();
+            // auto vv = actives.back();
+            // actives.pop_back();
+            // discharge(vv);
+            discharge(*vp);
+            if (C.blocked[*vp])
+            {
+                L.emplace_front(*vp);
+                L.erase(vp);
+            }
+            vp = first_active();
         }
         // t_bf += chrono::duration_cast<chrono::nanoseconds>((chrono::steady_clock::now() - begintime)).count();
 
@@ -644,6 +644,7 @@ struct GoldbergRao
                 // assert(flow_in == flow_out);
             }
         // t_tr += chrono::duration_cast<chrono::nanoseconds>((chrono::steady_clock::now() - begintime)).count();
+        
     }
 
     vec<int> stcut()
