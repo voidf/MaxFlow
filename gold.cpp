@@ -51,8 +51,8 @@ struct GoldbergRao
 
     struct ContractedGraph : Graph
     {
-        vec<vec<int>> pred;   // 反图
-        vec<us<int>> members; // 有单点查in操作
+        vec<vec<int>> pred;    // 反图
+        vec<vec<int>> members; // 有单点查in操作
         vec<int> distances;
         vec<int> representative; // 缩点代表元素，即首个members，之后考虑优化掉
         vec<char> blocked;       // bool数组
@@ -83,6 +83,11 @@ struct GoldbergRao
     vec<T> dist;
     vec<T> nflow;
     vec<vec<int>> out_children, in_children;
+    int ctr_bf = 0;
+    int ctr_translate = 0;
+    int ctr_li = 0;
+    long long ctr_scc = 0;
+    long long ctr_sccedge = 0;
 
     GoldbergRao(int n, int m) : N(n), M(m), R(n)
     {
@@ -100,6 +105,11 @@ struct GoldbergRao
                 ed.flow = 0;
             }
         }
+        ctr_bf = 0;
+        ctr_translate = 0;
+        ctr_li = 0;
+        ctr_scc = 0;
+        ctr_sccedge = 0;
     }
 
     static inline T iceil(T a, T b) { return a / b + (a % b > 0); }
@@ -165,6 +175,7 @@ struct GoldbergRao
 
     vec<us<int>> length_strongly_connected_components()
     {
+        vec<int> cur(N, 0);
         vec<int> preorder(N, -1);
         vec<int> lowlink(N, INF);
         vec<char> scc_found(N, 0); // vis数组
@@ -184,13 +195,14 @@ struct GoldbergRao
                     bool done = 1;
                     for (auto &[w, a] : R.E[v])
                     {
+                        ++ctr_sccedge;
                         if (preorder[w] == -1 &&
                             is_at_capacity(v, w) == 0 &&
                             a.len == 0 &&
                             is_admissible_edge(v, w))
                         {
                             Q.emplace_back(w);
-                            done = 0;
+                            done = 0; // 非递归scc，但暴力
                             break;
                         }
                     }
@@ -233,7 +245,104 @@ struct GoldbergRao
 
     ContractedGraph condensation()
     {
-        auto scc = length_strongly_connected_components();
+        vec<vec<int>> scc;
+        ++ctr_scc;
+        int st_mp, ed_mp;
+        // int si;
+        // scc
+        vec<int> dfn(N, 0);
+        vec<int> dfrom(N, INF); // 用于处理上一个dfs过的儿子
+        vec<int> low(N, INF);
+        vec<int> belongs(N, 0);           // 已经被缩点的才打1
+        vec<mp<int, Edge>::iterator> cur; // 非递归scc用当前弧，可以干掉看看是不是更快
+        vec<int> sta;
+        vec<int> dmp; // 成员栈，scc还是得开两个栈
+        dmp.reserve(N);
+        sta.reserve(N);
+        cur.reserve(N);
+        int cbelongs = 0; // 这个不一定是最终个数，得到的belongs数组相当于一个并查集，还得拉直才是强连通分量
+
+        for (int i = 0; i < N; ++i)
+            cur.emplace_back(R.E[i].begin());
+
+        int dtime = 0;
+        for (int i = 0; i < N; ++i)
+        {
+            if (belongs[i])
+                continue;
+            assert(sta.size() == 0);
+            sta.emplace_back(i);
+            // si = 0;
+            dfn[i] = low[i] = ++dtime;
+            while (sta.size())
+            {
+                // int v = sta[si];
+                int v = sta.back();
+                bool done = 1;
+                while (cur[v] != R.E[v].end())
+                {
+                    ++ctr_sccedge;
+                    auto [w, a] = *cur[v];
+                    if (dfrom[v] != INF)
+                    {
+                        low[v] = min(low[dfrom[v]], low[v]);
+                        dfrom[v] = INF; // 确保只消费一次
+                    }
+                    ++cur[v];
+                    // if (dfrom[v] == w)
+                    // continue;
+                    if (!is_at_capacity(v, w) && a.len == 0 && is_admissible_edge(v, w))
+                    {
+                        if (dfn[w])
+                        {
+                            if (!belongs[w])
+                                low[v] = min(low[v], dfn[w]);
+                        }
+                        else
+                        {
+                            sta.emplace_back(w);
+                            // ++si;
+                            done = 0;
+                            low[w] = dfn[w] = ++dtime;
+                            dfrom[v] = w;
+                            break;
+                        }
+                    }
+                }
+                if (done)
+                {
+                    if (dfrom[v] != INF)
+                    {
+                        low[v] = min(low[dfrom[v]], low[v]);
+                        dfrom[v] = INF;
+                    }
+                    dmp.emplace_back(sta.back());
+                    sta.pop_back();
+
+                    // --si;
+                    if (low[v] == dfn[v])
+                    {
+                        scc.emplace_back();
+                        // ++cbelongs;
+                        while (dmp.size() && dfn[dmp.back()] >= dfn[v])
+                        {
+                            int c = dmp.back();
+                            dmp.pop_back();
+                            scc.back().emplace_back(c);
+                            belongs[c] = scc.size();
+                            if (c == this->s)
+                                st_mp = scc.size() - 1;
+                            else if (c == this->t)
+                                ed_mp = scc.size() - 1;
+                            // if (c == v)
+                                // break;
+                        }
+                    }
+                }
+            }
+        }
+
+        // auto scc = length_strongly_connected_components();
         if (R.E.size() == 0)
             return ContractedGraph(0);
         int i = 0;
@@ -241,9 +350,12 @@ struct GoldbergRao
         int number_of_components = scc.size();
 
         ContractedGraph C(number_of_components); // 这里是有向图
+        C.start_mapping = st_mp;
+        C.end_mapping = ed_mp;
         for (auto &component : scc)
         {
-            C.members[i].insert(component.begin(), component.end());
+            // C.members[i].insert(component.begin(), component.end());
+            C.members[i] = component;
             C.distances[i] = dist[*component.begin()];
             for (auto n : component)
                 mapping[n] = i;
@@ -282,10 +394,10 @@ struct GoldbergRao
         {
             auto &scc_members = condensed_graph.members[scc];
             int rep_vertex = *scc_members.begin();
-            if (scc_members.count(start_node))
-                condensed_graph.start_mapping = scc;
-            if (scc_members.count(end_node))
-                condensed_graph.end_mapping = scc;
+            // if (scc_members.count(start_node))
+            //     condensed_graph.start_mapping = scc;
+            // if (scc_members.count(end_node))
+            //     condensed_graph.end_mapping = scc;
             if (scc_members.size() < 2)
                 continue;
 
@@ -381,6 +493,8 @@ struct GoldbergRao
                 if (--indegree[v] == 0)
                     _q.emplace(v);
         }
+        if (L.size() != E.size())
+            cerr << "err";
         assert(L.size() == E.size());
         return L;
     }
@@ -410,6 +524,9 @@ struct GoldbergRao
 
     T compute_blocking_flow(ContractedGraph &C, int start_node, int end_node, T maximum_flow_to_route)
     {
+        ++ctr_bf;
+        list<int> actives;
+
         C.blocked.assign(C.E.size(), false);
         C.excess.assign(C.E.size(), 0);
         for (int u = 0; u < C.E.size(); ++u)
@@ -425,6 +542,8 @@ struct GoldbergRao
             T delta = min(C.excess[u], C.E[u][v].capacity - C.E[u][v].flow);
             C.E[u][v].flow += delta; // 这里没给反边加流量，有点怪
             C.excess[v] += delta;
+            if (C.excess[v] > 0 && v != start_node && v != end_node)
+                actives.emplace_back(v);
             C.excess[u] -= delta;
         };
         auto pull = [&](int u, int v)
@@ -433,6 +552,8 @@ struct GoldbergRao
             C.E[u][v].flow -= delta;
             C.excess[v] -= delta;
             C.excess[u] += delta;
+            if (C.excess[u] > 0 && u != start_node && u != end_node)
+                actives.emplace_back(u);
         };
         auto discharge = [&](int v)
         {
@@ -456,27 +577,37 @@ struct GoldbergRao
         // toposort
         auto L = topological_sort(C.E);
         // end toposort
-        auto first_active = [&]() -> list<int>::iterator
+        // actives.reserve(C.E.size());
+        for (auto i : L)
+            if (i != start_node && i != end_node && C.excess[i] > 0)
+                actives.emplace_back(i);
+
+        // auto first_active = [&]() -> list<int>::iterator
+        // {
+        //     auto vp = L.begin();
+        //     while (vp != L.end())
+        //     {
+        //         if (*vp != start_node && *vp != end_node && C.excess[*vp] > 0)
+        //             return vp;
+        //         ++vp;
+        //         ++ctr_li;
+        //     }
+        //     return vp;
+        // };
+        // auto vp = first_active();
+        // while (vp != L.end())
+        while (actives.size())
         {
-            auto vp = L.begin();
-            while (vp != L.end())
-            {
-                if (*vp != start_node && *vp != end_node && C.excess[*vp] > 0)
-                    return vp;
-                ++vp;
-            }
-            return vp;
-        };
-        auto vp = first_active();
-        while (vp != L.end())
-        {
-            discharge(*vp);
-            if (C.blocked[*vp])
-            {
-                L.emplace_front(*vp);
-                L.erase(vp);
-            }
-            vp = first_active();
+            auto vv = actives.back();
+            actives.pop_back();
+            discharge(vv);
+            ++ctr_li;
+            // if (C.blocked[*vp])
+            // {
+            //     L.emplace_front(*vp);
+            //     L.erase(vp);
+            // }
+            // vp = first_active();
         }
         return limit_flow(C, start_node, end_node, maximum_flow_to_route);
     }
@@ -529,8 +660,9 @@ struct GoldbergRao
         return flow;
     }
 
-    void translate_flow_from_contraction_to_original(ContractedGraph &C, int start_node, int end_node, T flow_routed)
+    void translate_flow_from_contraction_to_original(ContractedGraph &C, const int start_node, const int end_node, const T flow_routed)
     {
+        ++ctr_translate;
         nflow.assign(N, 0); // original
         nflow[start_node] = flow_routed;
         nflow[end_node] = -flow_routed;
@@ -555,12 +687,8 @@ struct GoldbergRao
             if (C.members[v].size() >= 2)
             {
                 int rep = C.representative[v];
-                // if (C.representative.size() == 2 and rep == 0 and v == 0 && start_node == 1 && end_node == 2)
-                // cerr << "e";
                 T flow_in = route_in_flow_tree(rep);
                 T flow_out = route_out_flow_tree(rep);
-                // if (flow_in != flow_out)
-                // std::cerr << "err";
                 assert(flow_in == flow_out);
             }
     }
@@ -589,7 +717,7 @@ struct GoldbergRao
         return D;
     }
 
-    T solve(int s, int t)
+    T solve(const int s, const int t)
     {
         this->s = s;
         this->t = t;
@@ -604,6 +732,8 @@ struct GoldbergRao
         T prev_error_bound = INF;
         while (error_bound >= 1)
         {
+            // if (s == 7 && t == 5 && error_bound == 135)
+                // cerr << "bk";
             assert(prev_error_bound == INF || error_bound <= prev_error_bound / 2);
             /**/ T flow_to_route = iceil(error_bound, num_iterations_in_phase);
             for (int _ = 0; _ < 8 * num_iterations_in_phase; ++_)
@@ -651,12 +781,11 @@ struct GoldbergRao
                 total_routed_flow += flow_routed;
                 if (flow_routed == 0)
                     return total_routed_flow;
-                // if (R.E[1][0].capacity == 132 && R.E[1][0].flow == 129)
-                // cerr << "e";
                 translate_flow_from_contraction_to_original(contracted_graph, s, t, flow_routed);
             }
         }
-        return total_routed_flow;
+        throw "23333";
+        // return total_routed_flow;
     }
 } * gr;
 
@@ -736,6 +865,13 @@ void work(int l, int r)
         int c = 0;
         gr->rec();
         t = gr->solve(I[S], I[T]);
+        cerr << "ctr_bf:" << gr->ctr_bf << " ";
+        cerr << "ctr_translate:" << gr->ctr_translate << " ";
+        cerr << "ctr_li:" << gr->ctr_li << " ";
+        cerr << "ctr_scc:" << gr->ctr_scc << " ";
+        cerr << "ctr_sccedge:" << gr->ctr_sccedge << " ";
+        cerr << endl;
+
         // hp->returnExcess();
         for (auto i : gr->stcut())
             d[J[c++]] = i;
