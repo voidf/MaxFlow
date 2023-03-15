@@ -229,6 +229,20 @@ struct HLPP
         return D;
     }
 
+    auto cutset(T *d) const
+    {
+
+        vec<vec<T>> cset;
+        for (T u = 0; u < maxn; ++u)
+            for (int ie = first_edge[u]; ie < first_edge[u + 1]; ++ie)
+            {
+                auto &e = edges[ie];
+                    if (u > e.to && (d[u] == 0) != (0 == d[e.to]))
+                        cset.push_back({u, e.to});
+            }
+        return cset;
+    }
+
     inline void recoverUndirected()
     {
         for (auto &e : edges)
@@ -388,6 +402,7 @@ void work(int l, int r)
         for (auto i : hp->scanMincut())
             d[J[c++]] = i;
         hp->recoverUndirected();
+        hp->cutset(&d.front());
     }
     ans[T][S] = ans[S][T] = t;
     int cnt1 = 0, cnt2 = 0;

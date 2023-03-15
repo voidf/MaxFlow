@@ -784,3 +784,23 @@
 2023-03-14 23:52:52.265 | INFO     | __main__:<module>:99 - 400 n:100, m:3607, U:1000 aomodulell.exe:0.032002 gold.exe:14.379558
 2023-03-14 23:53:07.182 | INFO     | __main__:<module>:99 - 401 n:100, m:3667, U:1000 aomodulell.exe:0.031538 gold.exe:14.799446
 2023-03-14 23:53:17.085 | INFO     | __main__:<module>:99 - 402 n:100, m:2714, U:1000 aomodulell.exe:0.030002 gold.exe:9.814513
+2023-03-15 11:07:35.263 | INFO     | __main__:<module>:102 - 400 n:100, m:1547, U:356973 aomodule.exe:0.02729 hlpp.exe:0.021533 gold.exe:7.289791 goldv2.exe:8.430558
+2023-03-15 11:10:21.015 | INFO     | __main__:<module>:102 - 400 n:721, m:74474, U:25260 aomodule.exe:1.289289 hlpp.exe:1.353197 gold.exe:16105.359944 goldv1.exe:16661.787936
+2023-03-15 11:20:01.210 | INFO     | __main__:<module>:102 - 400 n:100, m:2954, U:220422 aomodule.exe:0.029 hlpp.exe:0.023999 gold.exe:16.010334 goldv2.exe:18.283344
+2023-03-15 11:20:33.700 | INFO     | __main__:<module>:102 - 401 n:100, m:2820, U:195469 aomodule.exe:0.029 hlpp.exe:0.023 gold.exe:14.994493 goldv2.exe:17.383433
+2023-03-15 13:58:02.084 | INFO     | __main__:<module>:104 - 400 n:100, m:4792, Umax:40585, Usum:98823908 aomodule.exe:0.036998 hlpp.exe:0.028 gold.exe:25.62443 goldv2.exe:26.458709
+2023-03-15 13:58:15.178 | INFO     | __main__:<module>:104 - 401 n:100, m:1368, Umax:696250, Usum:471041577 aomodule.exe:0.027 hlpp.exe:0.019001 gold.exe:6.314448 goldv2.exe:6.682372
+2023-03-15 13:58:28.590 | INFO     | __main__:<module>:104 - 402 n:100, m:1421, Umax:668659, Usum:464844616 aomodule.exe:0.027 hlpp.exe:0.019 gold.exe:6.488131 goldv2.exe:6.830982
+2023-03-15 13:59:24.826 | INFO     | __main__:<module>:104 - 403 n:100, m:4937, Umax:81409, Usum:199418098 aomodule.exe:0.035 hlpp.exe:0.028 gold.exe:27.545969 goldv2.exe:28.504108
+2023-03-16 00:11:46.946 | INFO     | __main__:<module>:107 - 400 n:677, m:129306, Umax:5009, Usum:323880370 aomodule.exe:1.736655 LMESmodulev2.exe:1.697692 hlpp.exe:1.890247 dinic.exe:1.247974
+2023-03-16 00:12:07.981 | INFO     | __main__:<module>:107 - 401 n:930, m:251790, Umax:807, Usum:101654779 aomodule.exe:3.920732 LMESmodulev2.exe:3.994798 hlpp.exe:4.606728 dinic.exe:2.744311
+2023-03-16 00:12:09.740 | INFO     | __main__:<module>:107 - 402 n:339, m:19440, Umax:36044, Usum:353064025 aomodule.exe:0.249145 LMESmodulev2.exe:0.253999 hlpp.exe:0.215694 dinic.exe:0.214431
+2023-03-16 00:12:16.461 | INFO     | __main__:<module>:107 - 403 n:653, m:80009, Umax:12089, Usum:484318128 aomodule.exe:1.169265 LMESmodulev2.exe:1.214149 hlpp.exe:1.257632 dinic.exe:0.905621
+2023-03-16 00:12:20.929 | INFO     | __main__:<module>:107 - 404 n:605, m:38057, Umax:7168, Usum:136451077 aomodule.exe:0.739048 LMESmodulev2.exe:0.749774 hlpp.exe:0.697599 dinic.exe:0.621274
+2023-03-16 00:23:34.736 | INFO     | __main__:<module>:107 - 1 n:606, m:46108, Umax:11880, Usum:274179851 aomodule.exe:0.806935 LMESmodulev2.exe:0.843329 hlpp.exe:0.821107 dinic.exe:0.65806
+2023-03-16 00:23:35.061 | INFO     | __main__:<module>:107 - 2 n:174, m:1065, Umax:384220, Usum:200036321 aomodule.exe:0.051999 LMESmodulev2.exe:0.05208 hlpp.exe:0.032 dinic.exe:0.049
+2023-03-16 00:25:05.608 | INFO     | __main__:<module>:107 - 3 n:1968, m:571842, Umax:838, Usum:239907015 aomodule.exe:18.322366 LMESmodulev2.exe:18.239282 hlpp.exe:24.174067 dinic.exe:10.992808
+2023-03-16 00:26:15.417 | INFO     | __main__:<module>:107 - 4 n:2266, m:294544, Umax:2776, Usum:409196087 aomodule.exe:12.270656 LMESmodulev2.exe:12.297041 hlpp.exe:15.907148 dinic.exe:8.938043
+2023-03-16 00:27:45.961 | INFO     | __main__:<module>:107 - 5 n:2834, m:227649, Umax:1997, Usum:226936221 aomodule.exe:15.506847 LMESmodulev2.exe:15.412874 hlpp.exe:17.625046 dinic.exe:12.9558
+2023-03-16 00:27:48.465 | INFO     | __main__:<module>:107 - 6 n:348, m:40544, Umax:23221, Usum:470688682 aomodule.exe:0.388002 LMESmodulev2.exe:0.386068 hlpp.exe:0.389007 dinic.exe:0.30609
+2023-03-16 00:27:57.012 | INFO     | __main__:<module>:107 - 7 n:627, m:112746, Umax:8510, Usum:480611590 aomodule.exe:1.418707 LMESmodulev2.exe:1.430186 hlpp.exe:1.767769 dinic.exe:1.069141

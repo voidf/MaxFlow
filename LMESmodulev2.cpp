@@ -116,6 +116,7 @@ namespace ahuja_orlin
 
     private:
         using pa = pair<T, T>;
+        // A+ 出边 A- 入边
         vector<vector<cached_edge<T, U>>> &rnet;
         unique_ptr<label_info[]> lab;
         unique_ptr<vertex[]> verts;
@@ -124,7 +125,7 @@ namespace ahuja_orlin
         T _source, _sink, hivert{0}, _relabel_progress{0}, _relabel_threshold;
         // T lactl{0}, hactl{0}, lactm{0}, hactm{0};
         T MinL{0}, MaxML{0};
-        U _max_cap, K, karg, delta;
+        U _max_cap, K, karg, delta, Q, epi, M;
 
     public:
         max_flow_instance(vector<vector<cached_edge<T, U>>> &graph)
@@ -160,7 +161,15 @@ namespace ahuja_orlin
                 }
             K = static_cast<U>(ceil(log2(ceil(_max_cap)))); // 流值相关，过大可能有溢出风险。logU的来源，不(能很好)支持浮点
             auto kpow = static_cast<U>(log2(2 + ceil(log2(_max_cap) / log2(log2(_max_cap)))));
-            karg = static_cast<U>(ceil(pow(2, kpow)));
+            // 1910.04848 Section 4 Page 5:
+            // In order to balance the terms in the running time and optimize the overall running time,
+            // Ahuja et al. chose k to be the least power of 2 that exceeds 2 + logU / log(logU)
+
+            karg = static_cast<U>(ceil(pow(2, kpow))); // 论文中的k
+            // Section 6
+            Q = ceil(log(4 * rnet.size()) / log(karg));
+            epi = pow(karg, -Q);
+            M = pow(epi, -2);
         }
         max_flow_instance() {}
         U find_max_flow()
@@ -396,9 +405,9 @@ namespace ahuja_orlin
                             {
                                 MinL = label - 1;
                                 // if (lab[label].nset[2].empty())
-                                    // NextL[MinL] = NextL[label];
+                                // NextL[MinL] = NextL[label];
                                 // else
-                                    NextL[MinL] = label;
+                                NextL[MinL] = label;
                             }
                             lab[label - 1].nset[target_point_type_new].push(&verts[edge.to]);
 
@@ -644,7 +653,7 @@ struct Solver
 
 signed main()
 {
-    using U = long long;
+    using U = int;
     ios::sync_with_stdio(0);
     int n, m;
     cin >> n >> m;

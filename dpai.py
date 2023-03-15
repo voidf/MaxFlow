@@ -14,36 +14,39 @@ from cyaron import * # 引入CYaRon的库
 # exe1 = './diniczxgs.elf'
 # exe2 = 'zxg.exe'
 
+
+# cl.exe aomodule.cpp /O2 /std:c++17
 exes = [
     # 'zxg.exe',
     # 'ao.exe',
     # 'diniczxgs.exe',
     'aomodule.exe',
+    'LMESmodulev2.exe',
     'hlpp.exe',
+    'dinic.exe',
     # 'aomodulell.exe',
-    'gold.exe',
-    'goldv1.exe',
+    # 'gold.exe',
+    # 'goldv2.exe',
     # 'aomodulev1.exe',
     # 'LMESmodule.exe',
-    # 'LMESmodulev2.exe',
     # 'aomodulev2.exe',
     # 'aomodule_slower_arc.exe',
     # 'aomodule_slower_arcll.exe',
 ]
 
 # 这是一个图论题的数据生成器，该题目在洛谷的题号为P1339
-for T in range(400, 9999): # 即在[1, 4)范围内循环，也就是从1到3
+for T in range(100, 9999): # 即在[1, 4)范围内循环，也就是从1到3
     fn = f'T{T:03d}'
     # fn = f'T'
     test_data = IO(file_prefix=fn) # 生成 heat[1|2|3].in/out 三组测试数据
     tim = datetime.datetime.now()
 
-    n = randint(100, 1000)
+    n = randint(100, 6000)
     m = randint(n - 1, n * (n - 1)//2) # 边数
     # m = randint(n - 1, 2 * n) # 稀疏图
     # U = 1000_000_000
     # U = 100
-    U = randint(10, int(2e9 / m))
+    U = randint(10, int(1e9 / m))
     # s = randint(1, n) # 源点，随机选取一个
     # s = randint(1, n//2) # 源点，随机选取一个
     # t = randint(n//2+1, n) # 汇点，随机选取一个
@@ -56,7 +59,9 @@ for T in range(400, 9999): # 即在[1, 4)范围内循环，也就是从1到3
         self_loop=False, 
         repeated_edges=False) # 生成一个n点，m边的随机图，边权限制为5
     U = 1
+    Usum = 0
     for ed in graph.iterate_edges():
+        Usum += ed.weight
         U = max(U, ed.weight)
     # while len(graph.edges[s]) == 0 or len(graph.edges[t]) == 0:
     #     graph = Graph.graph(n, m, weight_limit=(5, 300),
@@ -73,7 +78,7 @@ for T in range(400, 9999): # 即在[1, 4)范围内循环，也就是从1到3
 
     test_data.flush_buffer()
     tim = datetime.datetime.now() - tim
-    print(f'gen done. n={n}, m={m}, time:{tim}')
+    print(f'gen done. n={n}, m={m}, Umax={U}, Usum={Usum}, time:{tim}')
 
     answers = []
     log_result = []
@@ -99,5 +104,5 @@ for T in range(400, 9999): # 即在[1, 4)范围内循环，也就是从1到3
     if is_break:
         break
     # print(i, n, m, s, t)
-    logger.info(f"{T} n:{n}, m:{m}, U:{U} {' '.join(log_result)}")
+    logger.info(f"{T} n:{n}, m:{m}, Umax:{U}, Usum:{Usum} {' '.join(log_result)}")
     # if(i % 10 == 0): print(i)
