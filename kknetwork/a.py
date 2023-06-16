@@ -77,7 +77,7 @@ if __name__ == "__main__":
         for nodeid, nodename in enumerate(nodelist):
             # for pos in range(len(I)):
             if len(G[nodename]): # 避免除零
-                I[:][nodeid] /= len(G[nodename])
+                I[:, nodeid] /= len(G[nodename]) # I阵完全就是为了幂乘而得出的，平时用直接1 / len(G[i])即可
         # print(I)
         # II = np.copy(I)
         # for i in range(1000):
@@ -85,8 +85,7 @@ if __name__ == "__main__":
         #     print(II)
         return I # 节点影响力矩阵
 
-    def getP0(G, V_union, pos, V_new, E_new, E_remv):
-        I = getI(G)
+    def get_P_move(G, I, V_union, pos, V_new, E_new, E_remv):
         P_pos = np.zeros((len(G), ), dtype=np.float64)
         for i in V_union:
             mi = mapping[i]
@@ -95,7 +94,7 @@ if __name__ == "__main__":
                     mj = mapping[j]
                     distance_l2 = np.linalg.norm(pos[i] - pos[j]) # l2范数距离（欧氏距离
                     l1 = 1 # 理想距离，即最短路，必定为1，因为是邻接的
-                    P_pos[mi] += I[mi][mj] * abs(distance_l2 - l1) / l1
+                    P_pos[mi] += 1 / len(G[j]) * abs(distance_l2 - l1) / l1
         P_move = np.zeros((len(G), ), dtype=np.float64)
         # P0 = np.copy(P_pos) # 式3-13，但这里并不只是删除边的点
         # 式3-11，新点+1，同时由于新0度点的P0是0，这步中相当于置1
@@ -107,10 +106,10 @@ if __name__ == "__main__":
         for i, j in E_new:
             mi, mj = mapping[i], mapping[j]
             if i in V_union: # 公式3-10，实际上当i在V_union中时，i必不属于新点，所以不用考虑重复加的问题
-                P_move[mi] = I[mi][mj] + P_pos[mi]
+                P_move[mi] = 1 / len(G[i]) + P_pos[mi]
                 # P0[mi] += I[mi][mj]
             if j in V_union:
-                P_move[mj] = I[mj][mi] + P_pos[mj] # 无向不带权图，I[mj]整列非零格子都是度数的倒数，不用考虑u点遵从哪个的问题
+                P_move[mj] = 1 / len(G[j]) + P_pos[mj] # 无向不带权图，I[mj]整列非零格子都是度数的倒数，不用考虑u点遵从哪个的问题
                 # P0[mj] += I[mj][mi]
 
         for i in set(chain(*E_remv)):
@@ -123,14 +122,31 @@ if __name__ == "__main__":
 
         return P_move
 
+    def get_P_imp_map(G, I, alpha=0.8):
+        """我感觉多此一举的模拟退火mechanism，但是没它又不能算imp"""
+        P_imp_map = np.zeros((len(G), len(G))) # 返回应该是个二维阵
+        for node_index, node_name in enumerate(nodelist):
+            p0 = np.zeros((len(G), ), dtype=np.float64)
+            p0[node_index] = 1
+            # P_imp_map[node_index] = np.matmul(p0, np.linalg.matrix_power(I, 200)) # 或者我们直接用矩阵快速幂
+            p0 = np.matmul(p0, I)
+            for n in range(20): # 我们先暂定迭代个n=20步
+                P_imp_map[node_index] += p0 # 式3-9
+                p0 = np.matmul(p0, alpha * I)
+
+        return P_imp_map # Imp(v) = sum(P_imp_map[v])
+
+
     I = getI(G)
     print(I)
     
-    P0 = getP0(G, V_union, pos, inserted_nodes, inserted_edges, deleted_edges)
+    P_move_0 = get_P_move(G, I, V_union, pos, inserted_nodes, inserted_edges, deleted_edges)
     # P0 = np.array([0,0,0,0,0,1,1], dtype=np.float64)
-    PP = np.copy(P0)
-    print(P0)
+    # PP = np.copy(P_move_0)
+    print(P_move_0)
 
+    P_imp_map = get_P_imp_map(G, I)
+    print('P_imp_map', P_imp_map)
 
     # for _ in range(100):
     #     PP = np.matmul(PP, I)
@@ -138,10 +154,10 @@ if __name__ == "__main__":
 
     # print(PP)
     print()
-    P_move_final = np.matmul(P0, np.linalg.matrix_power(I, 100)) # 没有收敛就调大这个100，矩阵快速幂，非常快，但是I的幂本身是不收敛的，要小心溢出变成nan
+    P_move_final = np.matmul(P_move_0, np.linalg.matrix_power(I, 100)) # 没有收敛就调大这个100，矩阵快速幂，非常快，但是I的幂本身是不收敛的，要小心溢出变成nan
     print(P_move_final)
     gamma = 1 # 我觉得这个γ是某篇引文里面的超参，全文只有一次出现，非常神秘
-    Si_hat = gamma / (P_move_final + 0.1)
+    Si_hat = gamma / (P_move_final + 0.1) + np.sum(P_imp_map, axis=1) # 后面这个项是大论文里的Imp
     beta_2 = 1 / max(Si_hat) # β2是一个用来归一化的常数
     Si = Si_hat * beta_2
     print(Si)
