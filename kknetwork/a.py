@@ -4,6 +4,95 @@ import networkx as nx
 import numpy as np
 import matplotlib.pyplot as plt
 
+from networkx.drawing.layout import _process_params, random_layout, rescale_layout
+
+def _kamada_kawai_costfn(pos_vec, np, invdist, meanweight, dim):
+    # Cost-function and gradient for Kamada-Kawai layout algorithm
+    # invdist: 1 / 距离矩阵
+    nNodes = invdist.shape[0]
+    pos_arr = pos_vec.reshape((nNodes, dim))
+
+    delta = pos_arr[:, np.newaxis, :] - pos_arr[np.newaxis, :, :] # 本节点和其它节点的位置坐标之差 shape=(n, n, 2)
+    nodesep = np.linalg.norm(delta, axis=-1) # 本节点和其它节点的欧氏距离 shape=(n, n)
+    direction = np.einsum("ijk,ij->ijk", delta, 1 / (nodesep + np.eye(nNodes) * 1e-3)) # 变化方向，除掉之后每个delta模长为1 shape=(n, n, 2)
+
+    offset = nodesep * invdist - 1.0
+    offset[np.diag_indices(nNodes)] = 0
+
+    cost = 0.5 * np.sum(offset**2)
+    grad = np.einsum("ij,ij,ijk->ik", invdist, offset, direction) - np.einsum(
+        "ij,ij,ijk->jk", invdist, offset, direction
+    )
+
+    # Additional parabolic term to encourage mean position to be near origin:
+    sumpos = np.sum(pos_arr, axis=0) # shape=(2)， 分别为x，y方向的位置坐标的总和
+    cost += 0.5 * meanweight * np.sum(sumpos**2)
+    grad += meanweight * sumpos
+
+    return (cost, grad.ravel())
+
+
+def cost_fn(pos_vec, np, invdist, meanweight, dim):
+    cost, grad = _kamada_kawai_costfn(pos_vec, np, invdist, meanweight, dim)
+    
+
+# 魔改一下kk
+def kamada_kawai_layout(
+    G, dist=None, weight="weight", scale=1, center=None, dim=2
+):
+    import numpy as np
+
+    G, center = _process_params(G, center, dim)
+    nNodes = len(G)
+    if nNodes == 0:
+        return {}
+
+    if dist is None:
+        dist = dict(nx.shortest_path_length(G, weight=weight))
+    dist_mtx = 1e6 * np.ones((nNodes, nNodes))
+    for row, nr in enumerate(G):
+        if nr not in dist:
+            continue
+        rdist = dist[nr]
+        for col, nc in enumerate(G):
+            if nc not in rdist:
+                continue
+            dist_mtx[row][col] = rdist[nc]
+
+    assert pos is not None
+    pos_arr = np.array([pos[n] for n in G])
+
+    pos = _kamada_kawai_solve(dist_mtx, pos_arr, dim)
+
+    pos = rescale_layout(pos, scale=scale) + center
+    return dict(zip(G, pos))
+
+
+def _kamada_kawai_solve(dist_mtx, pos_arr, dim):
+    # pos_arr: {"A": (114514, 1), "B": (1919810, 0)} 按每个节点给的位置信息
+    # dist_mtx: [[0, 114514], [1919810, 1]] n^2的距离矩阵
+    # dim: 我们的case中始终等于2，不用管
+    # Anneal node locations based on the Kamada-Kawai cost-function,
+    # using the supplied matrix of preferred inter-node distances,
+    # and starting locations.
+
+    import numpy as np
+    import scipy as sp
+    import scipy.optimize  # call as sp.optimize
+
+    meanwt = 1e-3
+    costargs = (np, 1 / (dist_mtx + np.eye(dist_mtx.shape[0]) * 1e-3), meanwt, dim)
+
+    optresult = sp.optimize.minimize(
+        _kamada_kawai_costfn,
+        pos_arr.ravel(),
+        method="L-BFGS-B",
+        args=costargs,
+        jac=True,
+    )
+
+    return optresult.x.reshape((-1, dim))
+
 
 if __name__ == "__main__":
     dirty = False
